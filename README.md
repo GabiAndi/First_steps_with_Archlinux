@@ -485,10 +485,13 @@ Por último, debemos iniciar el servicio de administrador de sesiones y de impre
 
 ~~~TEXT
 # Servicio de sesiones
-systemctl enable gdm
+sudo systemctl enable gdm
 
 # Servicio de impresiones
-systemctl enable cups
+sudo systemctl enable cups
+
+# Servicio de bluetooth
+sudo systemctl enable bluetooth
 ~~~
 
 ### Instalacion de KDE Plasma
@@ -512,13 +515,13 @@ sudo pacman -S plasma kde-applications plasma-meta kde-applications-meta package
 Es recomendable, instalar temas tanto para Qt y Gtk:
 
 ~~~TEXT
-papirus-icon-theme arc-gtk-theme
+sudo pacman -S papirus-icon-theme arc-gtk-theme
 ~~~
 
 Por último habilitamos el servicio de administración de sesiones:
 
 ~~~TEXT
-systemctl enable sddm
+sudo systemctl enable sddm
 ~~~
 
 ## Instalacion de drivers
