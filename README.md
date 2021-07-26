@@ -697,7 +697,7 @@ glxspheres64 -info
 El navegador por excelencia *(por ahora)*:
 
 ~~~TEXT
-https://aur.archlinux.org/google-chrome.git
+git clone https://aur.archlinux.org/google-chrome.git
 cd google-chrome
 makepkg -si
 ~~~
@@ -715,7 +715,7 @@ Lo mas recomendable es ir a Google Chrome e instalar el Plugin de Gnome Shell Ex
 Este gestor de paquetes y actualizaciones, es muy completo y tiene soporte para Flatpak, Snap y AUR. Así que es muy bueno y recomendable:
 
 ~~~TEXT
-https://aur.archlinux.org/pamac-all.git
+git clone https://aur.archlinux.org/pamac-all.git
 cd pamac-all
 makepkg -si
 ~~~
