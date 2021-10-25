@@ -386,7 +386,7 @@ Ahora desconectamos el medio de instalación y ya podemos volver a iniciar el si
 
 ## Primer inicio de sesión
 
-### **Paso 1:** Nos conectamos a una red WiFi
+### **Paso 1:** Conectar a una red WiFi
 
 ~~~TEXT
 sudo nmcli dev wifi connect nombre_de_wifi password contraseña
@@ -509,19 +509,26 @@ xdg-user-dirs-update
 Para instalar KDE Plasma ejecutamos el siguiente comando:
 
 ~~~TEXT
-sudo pacman -S plasma kde-applications plasma-meta kde-applications-meta packagekit-qt5 kde-gtk-config
+sudo pacman -S plasma plasma-meta kde-applications kde-applications-meta packagekit-qt5
 ~~~
 
-Es recomendable, instalar temas tanto para Qt y Gtk:
+Es recomendable instalar temas tanto para Qt y Gtk, ademas de otros paquetes base:
 
 ~~~TEXT
-sudo pacman -S papirus-icon-theme arc-gtk-theme
+sudo pacman -S papirus-icon-theme arc-gtk-theme cups
 ~~~
 
-Por último habilitamos el servicio de administración de sesiones:
+Por último habilitamos servicios del sistema:
 
 ~~~TEXT
+# Servicio de sesiones
 sudo systemctl enable sddm
+
+# Servicio de impresiones
+sudo systemctl enable cups
+
+# Servicio de bluetooth
+sudo systemctl enable bluetooth
 ~~~
 
 ## Instalacion de drivers
@@ -702,7 +709,7 @@ cd google-chrome
 makepkg -si
 ~~~
 
-### Extenciones
+### Extenciones para GNOME
 
 Lo mas recomendable es ir a Google Chrome e instalar el Plugin de Gnome Shell Extention. Para luego instalar las siguientes extenciones:
 
