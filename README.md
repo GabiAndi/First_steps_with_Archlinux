@@ -607,7 +607,7 @@ Una vez instalado los drivers se debe reiniciar la PC antes de hacer cualquier o
 
 Este programa de Linux proporciona una solución para el cambio de GPU en laptops Optimus *(es decir, laptops con una configuración dual Nvidia/Intel o Nvidia/AMD)*.
 
-Para usuarios de **GNOME** primero tenemos que instalar un gestor de sesiones parcheado:
+Para usuarios de **GNOME** primero hay que instalar un gestor de sesiones parcheado:
 
 ~~~TEXT
 git clone https://aur.archlinux.org/gdm-prime.git
@@ -709,7 +709,7 @@ cd google-chrome
 makepkg -si
 ~~~
 
-### Extenciones para GNOME
+### Extenciones para GNOME Shell
 
 Lo mas recomendable es ir a Google Chrome e instalar el Plugin de Gnome Shell Extention. Para luego instalar las siguientes extenciones:
 
@@ -717,7 +717,7 @@ Lo mas recomendable es ir a Google Chrome e instalar el Plugin de Gnome Shell Ex
 - [Blur my Shell.](https://extensions.gnome.org/extension/3193/blur-my-shell/)
 - [Gnome 40 UI Improvements.](https://extensions.gnome.org/extension/4158/gnome-40-ui-improvements/)
 
-### PAMAC
+### PAMAC para GNOME
 
 Este gestor de paquetes y actualizaciones, es muy completo y tiene soporte para Flatpak, Snap y AUR. Así que es muy bueno y recomendable:
 
@@ -728,6 +728,34 @@ makepkg -si
 ~~~
 
 Luego de instalar el gestor, es recomendable reiniciar el PC y habilitar la extención de sistema *Pamac Updates Indicator.*
+
+### Yay como gestor de paquetes
+
+Yay es un asistente de instalación de paquetes para ArchLinux con capacidad para instalar paquetes desde el Repositorio de Usuarios de ArchLinux (AUR).
+
+Podemos instalarlo del siguiente repositorio de AUR:
+
+~~~TEXT
+git clone https://aur.archlinux.org/yay.git
+cd yay
+makepkg -si
+~~~
+
+### Octopi
+
+Octopi es un frontend para pacman muy poderoso. Con esta aplicación podremos administrar nuestra paqueteria de forma amigables.
+
+Podemos instalarlo desde Yay o sino clonando el repo:
+
+~~~TEXT
+# Con yay
+yay -S octopi
+
+# Manualmente
+git clone https://aur.archlinux.org/octopi.git
+cd octopi
+makepkg -si
+~~~
 
 ### Instalar Psensors
 
