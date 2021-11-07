@@ -1,6 +1,66 @@
-# Primeros pasos con Arch Linux (Sistema EFI)
+# Contenido
 
-Arch Linux es una distribución Linux para computadoras x86_64, ARM y I686 orientada a usuarios avanzados. Se compone en su mayor parte de software libre y de código abierto. Su modelo de desarrollo es de tipo [Rolling Release](https://es.wikipedia.org/wiki/Liberaci%C3%B3n_continua) y el enfoque de diseño persigue el [Principio KISS.](https://es.wikipedia.org/wiki/Principio_KISS)
+- [Contenido](#contenido)
+- [Primeros pasos con Arch Linux](#primeros-pasos-con-arch-linux)
+- [Instalación](#instalación)
+  - [Obtener la ISO](#obtener-la-iso)
+  - [Iniciar desde el USB](#iniciar-desde-el-usb)
+  - [Configuración de teclado](#configuración-de-teclado)
+  - [Conectar a internet](#conectar-a-internet)
+  - [Actualizar el reloj del sistema](#actualizar-el-reloj-del-sistema)
+  - [Crear las particiones para la instalación](#crear-las-particiones-para-la-instalación)
+  - [Formatear las particiones creadas](#formatear-las-particiones-creadas)
+  - [Montar las particiones creadas](#montar-las-particiones-creadas)
+  - [Instalación de Arch Linux](#instalación-de-arch-linux)
+  - [Generar el archivo fstab](#generar-el-archivo-fstab)
+  - [Cambiamos a la raíz de la instalación](#cambiamos-a-la-raíz-de-la-instalación)
+  - [Configuramos la zona horaria](#configuramos-la-zona-horaria)
+  - [Sincronizamos el reloj](#sincronizamos-el-reloj)
+  - [Establecemos el idioma](#establecemos-el-idioma)
+  - [Distribución de teclado](#distribución-de-teclado)
+  - [Generamos el archivo de locales](#generamos-el-archivo-de-locales)
+  - [Configuración de la red](#configuración-de-la-red)
+  - [Se habilita el NetworkManger](#se-habilita-el-networkmanger)
+  - [Cambio de contraseña de root](#cambio-de-contraseña-de-root)
+  - [Instalación del bootloader](#instalación-del-bootloader)
+  - [Finalizamos la instalación](#finalizamos-la-instalación)
+- [Primer inicio de sesión](#primer-inicio-de-sesión)
+  - [Conectar a una red WiFi](#conectar-a-una-red-wifi)
+  - [Creamos un usuario](#creamos-un-usuario)
+  - [Creamos una contraseña para el nuevo usuario](#creamos-una-contraseña-para-el-nuevo-usuario)
+  - [Añadimos a sudo el nuevo usuario](#añadimos-a-sudo-el-nuevo-usuario)
+  - [Iniciamos sesión con el nuevo usuario](#iniciamos-sesión-con-el-nuevo-usuario)
+  - [Actualizamos el sistema](#actualizamos-el-sistema)
+- [Configuracion de un entorno de escritorio](#configuracion-de-un-entorno-de-escritorio)
+  - [Instalacion de Xorg](#instalacion-de-xorg)
+  - [Instalacion de GNOME](#instalacion-de-gnome)
+  - [Instalacion de KDE Plasma](#instalacion-de-kde-plasma)
+- [Instalacion de drivers](#instalacion-de-drivers)
+  - [Drivers de la placa base](#drivers-de-la-placa-base)
+  - [Drivers de la targeta grafica](#drivers-de-la-targeta-grafica)
+  - [Instalación de optimus-manager](#instalación-de-optimus-manager)
+  - [Icono de optimus mánager](#icono-de-optimus-mánager)
+  - [Probar el rendimiento del sistema](#probar-el-rendimiento-del-sistema)
+- [Complementos y programas](#complementos-y-programas)
+  - [Google Chrome](#google-chrome)
+  - [Extenciones para GNOME Shell](#extenciones-para-gnome-shell)
+  - [PAMAC para GNOME](#pamac-para-gnome)
+  - [Yay como gestor de paquetes](#yay-como-gestor-de-paquetes)
+  - [Octopi](#octopi)
+  - [Psensors](#psensors)
+- [Configuración para servidor](#configuración-para-servidor)
+  - [Programas útiles](#programas-útiles)
+    - [Htop](#htop)
+    - [Screen](#screen)
+    - [Mc](#mc)
+  - [Establecer IP estática](#establecer-ip-estática)
+  - [Habilitar servidor SSH](#habilitar-servidor-ssh)
+  - [Generar claves SSH](#generar-claves-ssh)
+  - [Crear unidades RAID](#crear-unidades-raid)
+
+# Primeros pasos con Arch Linux
+
+Arch Linux es una distribución Linux para computadoras x86_64 orientada a usuarios avanzados. Se compone en su mayor parte de software libre y de código abierto. Su modelo de desarrollo es de tipo [rolling release](https://es.wikipedia.org/wiki/Liberaci%C3%B3n_continua) y el enfoque de diseño persigue el [principio KISS.](https://es.wikipedia.org/wiki/Principio_KISS)
 
 Para instalar y configurar este sistema operativo se necesita un grado de conocimiento superior al básico. No obstante, se puede mantener y administrar el sistema de forma sencilla. Los creadores y la comunidad, denominan como *filosofía*, los siguientes tres aspectos:
 
@@ -8,30 +68,28 @@ Para instalar y configurar este sistema operativo se necesita un grado de conoci
 2. Los principios del liderazgo del proyecto, Aaron Griffin, también son tomados como referencia: *Fiarse de las GUIs para construir y configurar tu sistema operativo termina dañando a los usuarios finales. Intentar ocultar la complejidad del sistema, termina complicando al sistema. Las capas de abstracción que sirven para ocultar el funcionamiento interno nunca son una cosa buena. En cambio, los componentes internos deberían ser diseñados de forma que no necesiten ser ocultados*.
 3. Arch Linux permite al usuario hacer las contribuciones que desee, mientras estas no vayan en contra de la filosofía.
 
-## Instalación
+# Instalación
 
-Este documentos es un resumen de instalación sacado de la [guía oficial de Arch Linux,](https://wiki.archlinux.org/title/Installation_guide) en donde se detalla en profundida el proceso de instalación. Por lo que recomendamos que lea la documentación oficial antes de seguir los consejos de este post.
+Este documentos es un resumen de instalación sacado de la [guía oficial de Arch Linux](https://wiki.archlinux.org/title/Installation_guide), en donde se detalla en profundida el proceso de instalación. Por lo que recomendamos que lea la documentación oficial antes de seguir los consejos de este post.
 
-### **Paso 0:** Obtener la ISO
+## Obtener la ISO
 
 Podemos obtener la última instantanea de la [página de Arch Linux](https://archlinux.org/) y grabarla en un USB con mínimo 4G de espacio.
 
-Luego de verificar que el USB no tenga particiones ocupadas y que la ISO se descargo correctamente, podemos pasarla al USB con el comando *dd*:
+Luego de verificar que la ISO se descargo correctamente, podemos pasarla al USB con el comando *dd*:
 
 ~~~TEXT
-# Comprobamos la integridad de datos de la ISO
-md5sum nombre_de_la_iso.iso && echo codigo_de_verificacion nombre_de_la_iso.iso
-
-# Grabamos la ISO en el USB
 sudo dd if=ruta_de_la_iso of=dispositivo
-
-# Nos aseguramos de que el cache del USB sea grabado
 sync
 ~~~
 
-Ahora podemos extraer el USB sin riesgo.
+Usamos sync para asegurarnos de que todo el cache se guardo en el dispositivo.
 
-### **Paso 1:** Configuración de teclado
+## Iniciar desde el USB
+
+Debemos bootear desde el USB para poder iniciar el proceso de instalación. Normalmente, cuando se inicia el Arch Live preguntará con que opción queremos bootear. Luego de bootear el sistema inicia y nos mostrará una consola completamente vacia a la espera de comandos.
+
+## Configuración de teclado
 
 Es necesario primero que nada configurar la distribución del teclado para tener correctas las teclas. En el caso de un teclado *Español Latinoamerica*, el comando sería el siguiente:
 
@@ -39,9 +97,9 @@ Es necesario primero que nada configurar la distribución del teclado para tener
 loadkeys la-latin1
 ~~~
 
-### **Paso 2:** Verificar la conexión a internet *(Importante)*
+## Conectar a internet
 
-Para verificar la conexión a internet ejecutamos:
+La instalación del sistema requiere conexión a internet para poder descargar todos los paquetes necesarios. Para verificar la conexión a internet ejecutamos:
 
 ~~~TEXT
 ip a
@@ -65,13 +123,13 @@ Puede escanear las redes disponibles:
 station wlan0 scan
 ~~~
 
-Ahora espere unos 10 segundos a que termine el escaneo, luego corra:
+Ahora espere unos 10 segundos a que termine el escaneo, luego podrá ver las redes disponibles:
 
 ~~~TEXT
 station wlan0 get-networks
 ~~~
 
-Luego para conectarse a una red:
+Para conectarse a una red puede correr:
 
 ~~~TEXT
 station wlan0 connect nombre_del_wifi
@@ -80,31 +138,29 @@ station wlan0 connect nombre_del_wifi
 Se le pedirá la contraseña, y se intentará conectar a la red indicada.Luego puede salir de la utilidad y volver a comprobar si tiene acceso a la red:
 
 ~~~TEXT
-# Salimos de la utilidad
 exit
-
-# Verificamos la conexión
-ip a
 ~~~
 
-### **Paso 3:** Actualizar el reloj del sistema
+## Actualizar el reloj del sistema
 
 ~~~TEXT
 timedatectl set-ntp true
 ~~~
 
-### **Paso 4:** Listar los discos en el equipo
+## Crear las particiones para la instalación
+
+Lo que se debe hacer ahora es crear las particiones de disco en donde se instalará el sistema. Podemos ver la cantidad de discos y sus particiones ejecutando:
 
 ~~~TEXT
 lsblk
 ~~~
 
-### **Paso 5:** Crear las particiones
-
-Lo que se debe hacer ahora es crear las particiones del disco en donde se instalará el sistema. La utilidad recomendada para sistemas GPT es *gdisk*:
+La utilidad recomendada para crear particiones en sistemas GPT es *gdisk* y para MBR es *fdisk*.
 
 ~~~TEXT
 gdisk /dev/sdx
+
+fdisk /dev/sdx
 ~~~
 
 Para poder instalar cualquier distibución Linux en un Sistema EFI, debemos crear obligatoriamente las siguientes particiones:
@@ -116,30 +172,33 @@ Adicionalmente, es recomendable crear una partición de intercambio SWAP. Y tamb
 
 Estas particiones adicionales se deben formatear y montar en la ubicación correspondiente.
 
-### **Paso 6:** Formatear las particiones creadas
+Si su sistema **no es UEFI**, no deberá crear la partición EFI obviamente, todo lo demas aplica para ambos sistemas.
 
-Vemos las particiones que se crearon:
+## Formatear las particiones creadas
+
+Una vez creamos las particiones que usaremos, procedemos a darles el formato correspondiente.
+
+Para particiones ext4:
 
 ~~~TEXT
-lsblk
+mkfs.ext4 /dev/sdxn
 ~~~
 
-Si todo es correcto pasamos a darles el formato correspondiente:
+Para particiones fat32:
 
 ~~~TEXT
-# Para particiones ext4
-mkfs.ext4 /dev/sdxn
-
-# Para particiones fat32
 mkfs.fat -F32 /dev/sdxn
+~~~
 
-# Para particiones swap
+Para particiones swap:
+
+~~~TEXT
 mkswap /dev/sdxn
 ~~~
 
-### **Paso 7:** Montar las particiones creadas
+## Montar las particiones creadas
 
-Este es el paso previo a instalar el sistema, debemos montar las unidades configuradas anteriormente en las ubicaciones correspondientes, para luego generar el archivo de montajes al inicio del sistema. Para este tutorial, el sistema se montara en */mnt*.
+Este es el paso previo a instalar el sistema, debemos montar las unidades configuradas anteriormente en las ubicaciones correspondientes, para luego generar el archivo de montajes al inicio del sistema. Para este tutorial, el sistema se montara en */mnt* del Live USB.
 
 La particion del sistema raiz:
 
@@ -150,21 +209,16 @@ mount /dev/sdxn /mnt
 Para la partición UEFI, debemos crear una ruta especial bajo la raíz llamada */boot*:
 
 ~~~TEXT
-# Creamos la carpeta de boot
 mkdir /mnt/boot
-
-# Montamos la partición
 mount /dev/sdxn /mnt/boot
 ~~~
 
-Las particiones extras como */home* o */opt* también deben estar dentro de la raíz:
+Particiones extras como */home* o */opt* también deben estar dentro de la raíz:
 
 ~~~TEXT
-# Para partición de /home
 mkdir /mnt/home
 mount /dev/sdxn /mnt/home
 
-# Para partición de /opt
 mkdir /mnt/opt
 mount /dev/sdxn /mnt/opt
 ~~~
@@ -175,15 +229,15 @@ Para la partición SWAP:
 swapon /dev/sdxn
 ~~~
 
-### **Paso 8:** Instalación de Archlinux
+## Instalación de Arch Linux
 
-Una vez tenemos todos los pasos anteriores cumplidos pasamos a finalmente instalar el sistema en las particiones que elegimos, con *pacstrap* seleccionamos la ubicación de instalación (en mi caso */mnt*) y elegimos los paquetes a instalar:
+Una vez tenemos todos los pasos anteriores cumplidos pasamos a finalmente instalar el sistema en las particiones que elegimos. Con *pacstrap* seleccionamos la ubicación de instalación (en mi caso */mnt*) y elegimos los paquetes a instalar:
 
 ~~~TEXT
-pacstrap /mnt base base-devel linux linux-firmware linux-headers nano networkmanager wpa_supplicant dialog wireless_tools netctl bash-completion
+pacstrap /mnt base base-devel linux linux-firmware linux-headers nano networkmanager dialog bash-completion
 ~~~
 
-### **Paso 9:** Generar el archivo fstab
+## Generar el archivo fstab
 
 Para que las particiones se monten al arranque y cumplan con su función debemos generar el *fstab*:
 
@@ -191,7 +245,7 @@ Para que las particiones se monten al arranque y cumplan con su función debemos
 genfstab -U /mnt >> /mnt/etc/fstab
 ~~~
 
-### **Paso 10:** Cambiamos a la instalación realizada
+## Cambiamos a la raíz de la instalación
 
 Para utilizar el sistema recien instalado, podemos utilizar el siguiente comando:
 
@@ -199,19 +253,19 @@ Para utilizar el sistema recien instalado, podemos utilizar el siguiente comando
 arch-chroot /mtn
 ~~~
 
-### **Paso 11:** Configuramos la zona horaria
+## Configuramos la zona horaria
 
 ~~~TEXT
 ln -sf /usr/share/zoneinfo/America/Argentina/Buenos_aires /etc/localtime
 ~~~
 
-### **Paso 12:** Sincronizamos el reloj
+## Sincronizamos el reloj
 
 ~~~TEXT
 hwclock --systohc
 ~~~
 
-### **Paso 13:** Establecemos el idioma
+## Establecemos el idioma
 
 Lo primero que debemos hacer es seleccionar el idioma que utilizará el sistema:
 
@@ -238,7 +292,7 @@ en_US.UTF-8 UTF-8
 es_AR.UTF-8 UTF-8
 ~~~
 
-### **Paso 14:** Distribución de teclado
+## Distribución de teclado
 
 Ahora creamos un archivo para la distribución del teclado:
 
@@ -252,13 +306,15 @@ Y añadimos:
 KEYMAP=la-latin1
 ~~~
 
-### **Paso 15:** Generamos el archivo de locales
+## Generamos el archivo de locales
+
+Generamos los archivos de configuración para establecer los cambios que generamos anteriormente:
 
 ~~~TEXT
 locale-gen
 ~~~
 
-### **Paso 16:** Configuración de la red
+## Configuración de la red
 
 Debemos darle un nombre a nuestra PC, para que sea identificable para otros quipos, lo podemos hacer editando el archivo:
 
@@ -286,45 +342,63 @@ Y añadimos lo siguiente:
 127.0.1.1   myhostname.localdomain myhostname
 ~~~
 
-### **Paso 17:** Se habilita el NetworkManger
+## Se habilita el NetworkManger
+
+Debemos habilitar el servicio de administración de redes, yo personalmente prefiero NetworkManger:
 
 ~~~TEXT
 systemctl enable NetworkManager
 ~~~
 
-### **Paso 18:** Cambio de contraseña de root
+## Cambio de contraseña de root
+
+Ingrese la contraseña de usuario root que prefiera, esto podemos eliminarlo mas tarde por seguridad, en un inicio vamos a logearnos en nuestro sistema como root:
 
 ~~~TEXT
 passwd
 ~~~
 
-Ingrese la contraseña de usuario root que prefiera.
+## Instalación del bootloader
 
-### **Paso 19:** Instalación del bootloader *(Muy importante)*
-
-A continuación se instalara GRUB en modo UEFI, esto permitirá al sistema arrancar:
+A continuación se instalara GRUB para UEFI o BIOS, esto permitirá al sistema arrancar:
 
 ~~~TEXT
-pacman -S grub efibootmgr ntfs-3g
+pacman -S grub ntfs-3g
 ~~~
 
-Es recomendable también instalar los microcodes, según la versión del procesador:
+Si tenes un sistema UEFI adicional debes instalar:
 
 ~~~TEXT
-# Para AMD
-pacman -S amd-ucode
+pacman -S efibootmgr
+~~~
 
-# Para INTEL
+Es recomendable también instalar los microcodes, según la versión del procesador.
+
+Para AMD:
+
+~~~TEXT
+pacman -S amd-ucode
+~~~
+
+Para INTEL:
+
+~~~TEXT
 pacman -S intel-ucode
 ~~~
 
-Luego configure el grub para su sistema bajo la ruta de la partición EFI. En mi caso es una notbook *x86_64*.
+Para sistemas UEFI configure el grub para su sistema bajo la ruta de la partición EFI:
 
 ~~~TEXT
 grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id='arch'
 ~~~
 
-Si tenes otro sistema operativo en alguna otra unidad o partición y queres que grub la detecte instala el siguiente paquete:
+Para sistemas BIOS debemos instalar el grub en la parcición MBR del disco de arranque directamente:
+
+~~~TEXT
+grub-install --target=i386-pc /dev/sdx
+~~~
+
+Si tenes otro sistema operativo en alguna otra unidad o partición y queres que grub la detecte, instale el siguiente paquete:
 
 ~~~TEXT
 pacman -S os-prober
@@ -333,10 +407,7 @@ pacman -S os-prober
 Luego se tiene que montar las unidades con sistema operativo:
 
 ~~~TEXT
-# Creamos la carpeta de montaje
 mkdir /mnt/extra_os
-
-# Montamos la unidad con S.O.
 mount /dev/sdxn /mnt/extra_os
 ~~~
 
@@ -346,23 +417,20 @@ Corremos os-prober para comprobar que sistema hay instalado:
 os-prober
 ~~~
 
-Y luego se crea la configuracion básica del grub:
+Ahora generamos la configuracion básica del grub:
 
 ~~~TEXT
 grub-mkconfig -o /boot/grub/grub.cfg
 ~~~
 
-Se copia el archivo de inicio:
+Como último paso si tu sistema es UEFI se debe copiar el archivo de inicio:
 
 ~~~TEXT
-# Creamos la carpeta de booteo
 mkdir /boot/EFI/boot
-
-# Copiamos el archivo del bootloader
 cp /boot/EFI/arch/grubx64.efi /boot/EFI/boot/bootx64.efi
 ~~~
 
-### **Paso 20:** Finalizamos la instalación
+## Finalizamos la instalación
 
 Salimos de arch-chroot:
 
@@ -384,23 +452,25 @@ systemctl poweroff
 
 Ahora desconectamos el medio de instalación y ya podemos volver a iniciar el sistema.
 
-## Primer inicio de sesión
+# Primer inicio de sesión
 
-### **Paso 1:** Conectar a una red WiFi
+## Conectar a una red WiFi
+
+Usando NetworkManager podemos conectarnos a una red:
 
 ~~~TEXT
-sudo nmcli dev wifi connect nombre_de_wifi password contraseña
+nmcli dev wifi connect nombre_de_wifi password contraseña
 ~~~
 
-### **Paso 2:** Creamos un usuario
+## Creamos un usuario
 
 Una nueva instalación te deja solo con la cuenta de superusuario, más conocida como *root*. Iniciar sesión como *root* durante períodos prolongados de tiempo, posiblemente incluso exponerlo a través de SSH en un servidor, es inseguro. Es por eso que debemos crear un usuario para nosotros:
 
 ~~~TEXT
-useradd -m -g users -G ftp,http,log,rfkill,sys,uucp,audio,storage,video,wheel,games,power,scanner,kvm -s /bin/bash nombre_usuario
+useradd -m -G ftp,http,log,rfkill,sys,uucp,audio,storage,video,wheel,games,power,scanner,kvm -s /bin/bash nombre_usuario
 ~~~
 
-### **Paso 3:** Creamos una contraseña para el nuevo usuario
+## Creamos una contraseña para el nuevo usuario
 
 Para mayor seguridad es recomendable que le pongamos contraseña al nuevo usuario creado.
 
@@ -408,7 +478,7 @@ Para mayor seguridad es recomendable que le pongamos contraseña al nuevo usuari
 passwd nombre_usuario
 ~~~
 
-### **Paso 4:** Añadimos a sudo el nuevo usuario
+## Añadimos a sudo el nuevo usuario
 
 Editamos el archivo de sudo y luego descomentamos la linea que habilita al grupo wheel:
 
@@ -419,10 +489,12 @@ EDITOR=nano visudo
 Y descomentamos la linea:
 
 ~~~TEXT
-%wheel ALL=(ALL) NOPASSWD: ALL
+%wheel ALL=(ALL) ALL
 ~~~
 
-### **Paso 5:** Iniciamos sesión con el nuevo usuario
+Esto permitirá que usuarios que pertenescan al grupo wheel puedan usar sudo.
+
+## Iniciamos sesión con el nuevo usuario
 
 Salimos de la sesión de root:
 
@@ -432,7 +504,7 @@ exit
 
 Y nos logeamos con el nuevo usuario y contraseña.
 
-### **Paso 6:** Actualizamos el sistema
+## Actualizamos el sistema
 
 Ahora que tenemos el sistema instalado y configurado con una cuenta de usuario válida, lo que debemos hacer es comprobar si existen actualizaciones disponibles. Pero antes, es buena idea habilitar el soporte multilib:
 
@@ -453,13 +525,13 @@ Luego, actualizamos la lista de repositorios y verificamos las actualizaciones:
 sudo pacman -Syu
 ~~~
 
-## Configuracion de un entorno de escritorio
+# Configuracion de un entorno de escritorio
 
 Un entorno de escritorio es recomendado si la computadora en donde se esta instalando el sistema requiere de capacidades gráficas. Existen una variedad bastante grande de entornos de escritorios, a mi en lo personal me gustan dos: GNOME y KDE Plasma.
 
 Antes de instalar un entorno debemos tener el servidor de gráficos. Xorg esta en casi todo sistema, sin embargo, Wayland esta ganando terreno ultimamente.
 
-### Instalacion de Xorg
+## Instalacion de Xorg
 
 Podemos instalar el servidor de ventanas X con el comando:
 
@@ -467,9 +539,9 @@ Podemos instalar el servidor de ventanas X con el comando:
 sudo pacman -S xorg
 ~~~
 
-### Instalacion de GNOME
+## Instalacion de GNOME
 
-Si GNOME es tu escritorio favorito, lo podes instalar tan facil como el siguiente comando:
+Si GNOME es tu escritorio, lo podes instalar tan facil como el siguiente comando:
 
 ~~~TEXT
 sudo pacman -S gnome gnome-extra
@@ -484,25 +556,22 @@ sudo pacman -S papirus-icon-theme cups
 Por último, debemos iniciar el servicio de administrador de sesiones y de impresión:
 
 ~~~TEXT
-# Servicio de sesiones
 sudo systemctl enable gdm
-
-# Servicio de impresiones
 sudo systemctl enable cups
-
-# Servicio de bluetooth
 sudo systemctl enable bluetooth
 ~~~
 
-### Instalacion de KDE Plasma
+## Instalacion de KDE Plasma
 
-Si queres tener en tu carpeta de usuario, carpetas como *Documentos*, *Descargas*, *Música*, *etc*.
+Si queres tener en tu carpeta de usuario, carpetas como *Documentos*, *Descargas*, *Música*, *etc*. Instalamos el servicios de carpetas de usuario:
 
 ~~~TEXT
-# Instalamos el servicios de carpetas de usuario
 sudo pacman -S xdg-user-dirs
+~~~
 
-# Creamos las carpetas
+Y corremos la utilidad:
+
+~~~TEXT
 xdg-user-dirs-update
 ~~~
 
@@ -521,19 +590,14 @@ sudo pacman -S papirus-icon-theme arc-gtk-theme cups
 Por último habilitamos servicios del sistema:
 
 ~~~TEXT
-# Servicio de sesiones
 sudo systemctl enable sddm
-
-# Servicio de impresiones
 sudo systemctl enable cups
-
-# Servicio de bluetooth
 sudo systemctl enable bluetooth
 ~~~
 
-## Instalacion de drivers
+# Instalacion de drivers
 
-### Drivers de la placa base
+## Drivers de la placa base
 
 Si ejecutamos:
 
@@ -573,7 +637,7 @@ cd upd72020x-fw
 makepkg -si
 ~~~
 
-### Drivers de la targeta grafica
+## Drivers de la targeta grafica
 
 Primero instalamos las utilidades de mesa, esto nos servirá para haberiguar que gráfica esta renderizando el escritorio:
 
@@ -603,7 +667,7 @@ sudo pacman -S nvidia nvidia-utils nvidia-settings lib32-nvidia-utils virtualgl
 
 Una vez instalado los drivers se debe reiniciar la PC antes de hacer cualquier otra cosa.
 
-### Instalación de optimus-manager
+## Instalación de optimus-manager
 
 Este programa de Linux proporciona una solución para el cambio de GPU en laptops Optimus *(es decir, laptops con una configuración dual Nvidia/Intel o Nvidia/AMD)*.
 
@@ -642,17 +706,14 @@ Despues de instalar se tiene que **reiniciar el ordenador.**
 Una vez reiniciado ahora podemos ejecutar los siguientes comandos para cambiar el modo de uso de la gráfica:
 
 ~~~TEXT
-# Para cambiar a graficos de la tarjeta grafica
 optimus-manager --switch nvidia
 
-# Para usar la GPU integrada
 optimus-manager --switch integrated
 
-# Para usar la GPU bajo demanda
 optimus-manager --switch hybrid
 ~~~
 
-### Icono de optimus mánager
+## Icono de optimus mánager
 
 El programa *optimus-manager-qt* proporciona un icono en la bandeja del sistema para cambiar fácilmente entre gráficas. También incluye una GUI para configurar opciones sin editar el archivo de configuración manualmente.
 
@@ -681,25 +742,29 @@ Ahora si podemos instalar, si tu escritorio no es KDE pasma el *PKGBUILD* no se 
 makepkg -si
 ~~~
 
-### Probar el rendimiento del sistema
+## Probar el rendimiento del sistema
 
-Los siguientes comandos proporcionan información útil sobre el sistema gráfico:
+Los siguientes comandos proporcionan información útil sobre el sistema gráfico.
+
+Informacion de la placa utilizada:
 
 ~~~TEXT
-# Informacion de la placa utilizada
 glxinfo | grep -i vendor
 glxinfo | grep render
 glxinfo | grep direct
 glxinfo | grep OpenGL
+~~~
 
-# Benchmarks
+Benchmarks:
+
+~~~TEXT
 glxgears -info
 glxspheres64 -info
 ~~~
 
-## Complementos y programas importantes
+# Complementos y programas
 
-### Google Chrome
+## Google Chrome
 
 El navegador por excelencia *(por ahora)*:
 
@@ -709,7 +774,7 @@ cd google-chrome
 makepkg -si
 ~~~
 
-### Extenciones para GNOME Shell
+## Extenciones para GNOME Shell
 
 Lo mas recomendable es ir a Google Chrome e instalar el Plugin de Gnome Shell Extention. Para luego instalar las siguientes extenciones:
 
@@ -717,7 +782,7 @@ Lo mas recomendable es ir a Google Chrome e instalar el Plugin de Gnome Shell Ex
 - [Blur my Shell.](https://extensions.gnome.org/extension/3193/blur-my-shell/)
 - [Gnome 40 UI Improvements.](https://extensions.gnome.org/extension/4158/gnome-40-ui-improvements/)
 
-### PAMAC para GNOME
+## PAMAC para GNOME
 
 Este gestor de paquetes y actualizaciones, es muy completo y tiene soporte para Flatpak, Snap y AUR. Así que es muy bueno y recomendable:
 
@@ -729,7 +794,7 @@ makepkg -si
 
 Luego de instalar el gestor, es recomendable reiniciar el PC y habilitar la extención de sistema *Pamac Updates Indicator.*
 
-### Yay como gestor de paquetes
+## Yay como gestor de paquetes
 
 Yay es un asistente de instalación de paquetes para ArchLinux con capacidad para instalar paquetes desde el Repositorio de Usuarios de ArchLinux (AUR).
 
@@ -741,23 +806,27 @@ cd yay
 makepkg -si
 ~~~
 
-### Octopi
+## Octopi
 
 Octopi es un frontend para pacman muy poderoso. Con esta aplicación podremos administrar nuestra paqueteria de forma amigables.
 
-Podemos instalarlo desde Yay o sino clonando el repo:
+Podemos instalarlo desde Yay o sino clonando el repo.
+
+Con yay
 
 ~~~TEXT
-# Con yay
 yay -S octopi
+~~~
 
-# Manualmente
+Manualmente:
+
+~~~TEXT
 git clone https://aur.archlinux.org/octopi.git
 cd octopi
 makepkg -si
 ~~~
 
-### Instalar Psensors
+## Psensors
 
 Este Software permite la monitorización de sensores de temperatura:
 
@@ -774,5 +843,150 @@ sudo sensors-detect
 Por último instalamos la utilidad de Psensors.
 
 ~~~TEXT
-sudo pacman -S install psensor
+sudo pacman -S psensor
 ~~~
+
+# Configuración para servidor
+
+## Programas útiles
+
+### Htop
+
+Htop es un programa para ver por consola el estado rápido del sistema y los procesos en ejecución:
+
+~~~TEXT
+sudo pacman -S htop
+~~~
+
+### Screen
+
+Screen permite en una misma sesión de ssh tener multiples espacios de trabajo, esto es ideal para mantener el trabajo aunque la conexión se cierre repentinamente:
+
+~~~TEXT
+sudo pacman -S screen
+~~~
+
+### Mc
+
+Mc es como un administrador de archivos pero para consola, muy util:
+
+~~~TEXT
+sudo pacman -S mc
+~~~
+
+## Establecer IP estática
+
+Si disponemos o damos algún servicio, seguramente necesitaremos dejar una IP fija para que el servidor sea mas facil de ubicar en la red, esto lo podemos hacer con Network Manager.
+
+Primero listamos las conexiones que tenemos:
+
+~~~TEXT
+nmcli connection
+~~~
+
+Vamos a utilizar el nombre de la conexión para setear los parametros en el *nmcli*:
+
+~~~TEXT
+nmcli connection modify "Conexión cableada 1" \
+ipv4.addresses "192.168.1.200/24" \
+ipv4.gateway "192.168.1.1" \
+ipv4.dns "192.168.1.1,8.8.8.8" \
+ipv4.method "manual"
+~~~
+
+Todos los archivos de configuración se guardan en */etc/NetworkManager/system-connections*.
+
+## Habilitar servidor SSH
+
+Primero instalamos el servidor:
+
+~~~TEXT
+sudo pacman -S openssh
+~~~
+
+Luego habilitamos el servicio:
+
+~~~TEXT
+sudo systemctl enable sshd
+~~~
+
+## Generar claves SSH
+
+Para generar un conjunto de llaves SSH ejecutamos:
+
+~~~TEXT
+ssh-keygen -t rsa -b 4096 -C gabi -f ~/.ssh/id_rsa_gabi-sv
+
+ssh-copy-id -i ~/.ssh/id_rsa_gabi-sv gabi@192.168.1.200
+~~~
+
+## Crear unidades RAID
+
+Si se esta montando un servidor de archivos y tenes varios discos, lo mas seguro es que un esquema RAID se adapte a las necesidades de un file server.
+
+Para la gestión de un RAID vamos a utilizar *mdadm*:
+
+~~~TEXT
+sudo pacman -S mdadm
+~~~
+
+Para preparar nuestros discos debemos crear las particiones con la utilidad *gdisk* o *fdisk*, como los discos de mas de 2TB se llevan bien con GPT vamos a utilizar *gdisk*. Creamos las particiones y les damos un tipo Linux RAID con código FD00.
+
+Cuando tengamos los discos listos, vamos a crear la unidad RAID, en mi caso creo un RAID5 con 4 discos:
+
+~~~TEXT
+sudo mdadm --create --verbose --level=5 --chunk=512 --raid-devices=4 /dev/md/datos /dev/sdb1 /dev/sdc1 /dev/sdd1 /dev/sde1
+~~~
+
+Cuando el proceso inicie, la sincronización demorará un tiempo largo, podemos ver el proceso con:
+
+~~~TEXT
+cat /proc/mdstat
+~~~
+
+Una vez el proceso termine, debemos establecer la configuración para que el RAID este configurado con cada inicio del sistema, para eso ejecutamos el comando:
+
+~~~TEXT
+sudo mdadm --detail --scan
+~~~
+
+Y con la salida que nos da este comando editamos el archivo */etc/mdadm/mdadm.conf*:
+
+~~~TEXT
+sudo nano /etc/mdadm.conf
+~~~
+
+Al final del archivo añadimos lo obtenido por el comando anterior:
+
+~~~TEXT
+ARRAY /dev/md/datos metadata=1.2 spares=1 name=gabi-sv:datos UUID=4d255030:3d4ac77d:3fa4f00d:7008e316
+~~~
+
+Le damos un formato a nuestro RAID:
+
+~~~TEXT
+sudo mkfs.ext4 -v -L datos -b 4096 -E stride=128,stripe-width=384 /dev/md/datos
+~~~
+
+Creamos una carpeta y montamos el sistema:
+
+~~~TEXT
+sudo mkdir /mnt/datos
+sudo mount /dev/md/datos /mnt/datos
+~~~
+
+Actualizamos en fstab para que el disco se monte al iniciar el sistema. Abrimos el archivo y añadimos al final:
+
+~~~TEXT
+UUID=d50ae083-8ab7-47ba-82dc-fafe85ded302 /mnt/datos ext4 rw,relatime 0 1
+~~~
+
+Podemos obtener el UUID de nuestro RAID con el comando:
+
+~~~TEXT
+sudo blkid
+~~~
+
+A partir de ahora cuando el sistema se inicie el RAID se montará automáticamente.
+
+Y listo tenemos configurado el dispositivo para poder transferir datos a el. Si queremos escribir contenido sin ser sudo debemos cambiar los permisos.
