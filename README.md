@@ -58,6 +58,7 @@
   - [Generar claves SSH](#generar-claves-ssh)
   - [Crear unidades RAID](#crear-unidades-raid)
   - [Servidor de archivos SAMBA](#servidor-de-archivos-samba)
+  - [Wake On Lan](#wake-on-lan)
 
 # Primeros pasos con Arch Linux
 
@@ -1050,3 +1051,68 @@ Para grupos de samba:
 sudo gpasswd grupo -a nombre_usuario
 ~~~
 
+## Wake On Lan
+
+Podemos configurar nuestra placa de RED y el sistema para poder despertar via LAN.
+
+La placa base de la computadora de destino y el controlador de interfaz de red deben admitir Wake-on-LAN. La computadora de destino debe estar conectada físicamente (con un cable) a un enrutador o a la computadora de origen para que WOL funcione correctamente. Algunas tarjetas inalámbricas son compatibles con Wake on Wireless (WoWLAN o WoW).
+
+Para averiguar el estado de la interfaz de red debemos instalar *ethtool*:
+
+~~~TEXT
+sudo pacman -S ethtool
+~~~
+
+Cuando la herramienta este instalada podemos comprobar el estado de alguna placa de red con el comando:
+
+~~~TEXT
+sudo ethtool nombre_interfaz
+~~~
+
+Casi al final de la descripcion habrá una linea que dice:
+
+~~~TEXT
+Wake-on: d
+~~~
+
+Esta latra que le sigue a al campo dice en que estado esta la placa de red:
+
+- d (disabled)
+- p (PHY activity)
+- u (unicast activity)
+- m (multicast activity)
+- b (broadcast activity)
+- a (ARP activity)
+- g (magic packet activity)
+
+Para WOL se requiere que este en modo g. Podemos cambiar el estado de la placa con:
+
+~~~TEXT
+sudo ethtool -s nombre_interfaz wol g
+~~~
+
+Ahora si comprobamos el estado nuevamente vemos que cambio. Pero esto puede restablecerse en el proximo reinicio. Si lo hace podes hacer lo siguiente para dejar permanente la configuración.
+
+Creamos el archivo */etc/systemd/system/wol@.service* con lo siguiente:
+
+~~~TEXT
+[Unit]
+Description=Wake-on-LAN for %i
+Requires=network.target
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/ethtool -s %i wol g
+Type=oneshot
+
+[Install]
+WantedBy=multi-user.target
+~~~
+
+Entonces podemos habilitar el servicio con:
+
+~~~TEXT
+sudo systemctl enable wol@nombre_interfaz
+~~~
+
+Y listo ya podemos hacer Wake On LAN.
