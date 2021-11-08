@@ -57,6 +57,7 @@
   - [Habilitar servidor SSH](#habilitar-servidor-ssh)
   - [Generar claves SSH](#generar-claves-ssh)
   - [Crear unidades RAID](#crear-unidades-raid)
+  - [Servidor de archivos SAMBA](#servidor-de-archivos-samba)
 
 # Primeros pasos con Arch Linux
 
@@ -990,3 +991,62 @@ sudo blkid
 A partir de ahora cuando el sistema se inicie el RAID se montará automáticamente.
 
 Y listo tenemos configurado el dispositivo para poder transferir datos a el. Si queremos escribir contenido sin ser sudo debemos cambiar los permisos.
+
+## Servidor de archivos SAMBA
+
+Samba es el conjunto de programas de interoperabilidad estándar de Windows para Linux y Unix. Desde 1992, Samba ha proporcionado servicios de impresión y archivos seguros, estables y rápidos para todos los clientes que utilizan el protocolo SMB/CIFS, como todas las versiones de DOS y Windows, OS/2, Linux y muchos otros.
+
+Para configurar Samba se tiene que instalar el paquete:
+
+~~~TEXT
+sudo pacman -S samba
+~~~
+
+Samba se configura en */etc/samba/smb.conf*, que está ampliamente documentado en la wiki de arch. Es necesario crear este archivo antes de iniciar el servicio, para ello se puede tener una plantilla [del repositorio de Samba en GitHub.](https://git.samba.org/samba.git/?p=samba.git;a=blob_plain;f=examples/smb.conf.default;hb=HEAD)
+
+Luego de crear el archivo habilitamos los servicios:
+
+~~~TEXT
+sudo systemctl enable smb
+sudo systemctl enable nmb
+sudo systemctl enable avahi-daemon
+~~~
+
+Podemos también iniciarlos:
+
+~~~TEXT
+sudo systemctl start smb
+sudo systemctl start nmb
+sudo systemctl start avahi-daemon
+~~~
+
+Para agregar usuarios a samba estos deben ser usuarios de linux, para añadir usuarios a linux podemos hacerlo con:
+
+~~~TEXT
+sudo useradd nombre_usuario
+~~~
+
+Luego creamos el usuario en samba:
+
+~~~TEXT
+sudo smbpasswd -a nombre_usuario
+~~~
+
+Podemos listar los usarios con:
+
+~~~TEXT
+sudo pdbedit -L
+~~~
+
+Podemos crear también grupos:
+
+~~~TEXT
+sudo groupadd grupo
+~~~
+
+Para grupos de samba:
+
+~~~TEXT
+sudo gpasswd grupo -a nombre_usuario
+~~~
+
