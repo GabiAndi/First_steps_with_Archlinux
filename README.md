@@ -48,7 +48,7 @@
   - [Yay como gestor de paquetes](#yay-como-gestor-de-paquetes)
   - [Octopi](#octopi)
   - [Psensors](#psensors)
-  - [Quemu/KVM](#quemukvm)
+  - [Qemu/KVM](#qemukvm)
 - [Configuración para servidor](#configuración-para-servidor)
   - [Programas útiles](#programas-útiles)
     - [Htop](#htop)
@@ -850,12 +850,12 @@ Por último instalamos la utilidad de Psensors.
 sudo pacman -S psensor
 ~~~
 
-## Quemu/KVM
+## Qemu/KVM
 
 La mejor opción para virtualizar en Linux. Lo primero que hacemos es instalar los paquetes necesarios:
 
 ~~~TEXT
-sudo pacman -S qemu dmidecode ebtables dnsmasq libvirt bridge-utils openbsd-netcat radvd virt-manager ifplugd ifenslave tcl edk2-ovmf
+sudo pacman -S qemu qemu-arch-extra dmidecode ebtables dnsmasq libvirt bridge-utils openbsd-netcat radvd virt-manager ifplugd ifenslave tcl edk2-ovmf
 ~~~
 
 Nos preguntará si queremos reemplazar iptables por iptables-nft, le diremos que si para poder instalar ebtables, el cual es necesario para poder tener conectividad de red en las máquinas virtuales.
