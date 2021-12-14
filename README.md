@@ -48,6 +48,7 @@
   - [Yay como gestor de paquetes](#yay-como-gestor-de-paquetes)
   - [Octopi](#octopi)
   - [Psensors](#psensors)
+  - [Quemu/KVM](#quemukvm)
 - [Configuración para servidor](#configuración-para-servidor)
   - [Programas útiles](#programas-útiles)
     - [Htop](#htop)
@@ -59,6 +60,7 @@
   - [Crear unidades RAID](#crear-unidades-raid)
   - [Servidor de archivos SAMBA](#servidor-de-archivos-samba)
   - [Wake On Lan](#wake-on-lan)
+  - [Añadir soporte para UPS](#añadir-soporte-para-ups)
 
 # Primeros pasos con Arch Linux
 
@@ -552,7 +554,7 @@ sudo pacman -S gnome gnome-extra
 También, recomiendo instalar el paquete de iconos Papirus y la utilidad de impresoras CUPS:
 
 ~~~TEXT
-sudo pacman -S papirus-icon-theme cups
+sudo pacman -S papirus-icon-theme cups ufw
 ~~~
 
 Por último, debemos iniciar el servicio de administrador de sesiones y de impresión:
@@ -586,7 +588,7 @@ sudo pacman -S plasma plasma-meta kde-applications kde-applications-meta package
 Es recomendable instalar temas tanto para Qt y Gtk, ademas de otros paquetes base:
 
 ~~~TEXT
-sudo pacman -S papirus-icon-theme arc-gtk-theme cups
+sudo pacman -S papirus-icon-theme arc-gtk-theme cups ufw
 ~~~
 
 Por último habilitamos servicios del sistema:
@@ -830,7 +832,7 @@ makepkg -si
 
 ## Psensors
 
-Este Software permite la monitorización de sensores de temperatura:
+Este software permite la monitorización de sensores de temperatura:
 
 ~~~TEXT
 sudo pacman -S lm_sensors
@@ -847,6 +849,63 @@ Por último instalamos la utilidad de Psensors.
 ~~~TEXT
 sudo pacman -S psensor
 ~~~
+
+## Quemu/KVM
+
+La mejor opción para virtualizar en Linux. Lo primero que hacemos es instalar los paquetes necesarios:
+
+~~~TEXT
+sudo pacman -S qemu dmidecode ebtables dnsmasq libvirt bridge-utils openbsd-netcat radvd virt-manager ifplugd ifenslave tcl edk2-ovmf
+~~~
+
+Nos preguntará si queremos reemplazar iptables por iptables-nft, le diremos que si para poder instalar ebtables, el cual es necesario para poder tener conectividad de red en las máquinas virtuales.
+
+Agregamos nuestro usuario a los grupos kvm y polkitd:
+
+~~~TEXT
+sudo usermod -aG kvm $USER
+sudo usermod -aG polkitd $USER
+~~~
+
+Cargamos los módulos necesarios. En caso de tener un procesador intel sería así:
+
+~~~TEXT
+sudo modprobe kvm-intel
+sudo modprobe kvm
+~~~
+
+En caso de ser AMD sería así:
+
+~~~TEXT
+sudo modprobe kvm-amd
+sudo modprobe kvm
+~~~
+
+Ahora habilitamos el servicio:
+
+~~~TEXT
+sudo systemctl enable libvirtd
+sudo systemctl start libvirtd
+~~~
+
+Le damos permiso a nuestro usuario para poder gestionar máquinas virtuales mediante el siguiente archivo:
+
+~~~TEXT
+sudo nano /etc/polkit-1/rules.d/50-org.libvirt.unix.manage.rules
+~~~
+
+Agregamos lo siguiente:
+
+~~~TEXT
+polkit.addRule(function(action, subject) {
+if (action.id == "org.libvirt.unix.manage" &&
+  subject.user == "NOMBRE_USUARIO") {
+  return polkit.Result.YES;
+}
+});
+~~~
+
+Reemplazamos NOMBRE_USUARIO por nuestro nombre de usuario. Reiniciamos y abrimos el gestor de máquinas virtuales.
 
 # Configuración para servidor
 
@@ -1116,3 +1175,34 @@ sudo systemctl enable wol@nombre_interfaz
 ~~~
 
 Y listo ya podemos hacer Wake On LAN.
+
+## Añadir soporte para UPS
+
+Para configurar una UPS en nuestro servidor tenemos que instalar el paquete *nut*:
+
+~~~TEXT
+sudo pacman -S nut
+~~~
+
+NUT tiene 3 demonios asociados:
+
+- El conductor que se comunica con la UPS.
+- Un servidor (upsd) que utiliza el controlador para informar el estado del UPS.
+- Un demonio de supervisión (upsmon) que supervisa el servidor upsd y toma medidas en función de la información que recibe.
+
+La idea es que si tiene varios sistemas conectados al UPS, uno puede comunicar el estado del UPS a través de la red y los demás pueden monitorear ese estado ejecutando sus propios servicios upsmon. NUT tiene una extensa documentación sobre la configuración, sin embargo, esto lo guiará a través de una configuración simple de un UPS USB y el servidor asociado y el monitor, todo en un sistema (configuración de escritorio común).
+
+Para configurar la UPS lo hacemos en el archivo */etc/nut/ups.conf*:
+
+~~~TEXT
+[nombre_ups]
+    driver = usbhid-ups
+    port = auto
+    desc = "Descripcion"
+~~~
+
+Para iniciar el programa ejecutamos:
+
+~~~TEXT
+sudo upsdrvctl start
+~~~
