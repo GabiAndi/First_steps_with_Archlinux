@@ -31,13 +31,14 @@
   - [Añadimos a sudo el nuevo usuario](#añadimos-a-sudo-el-nuevo-usuario)
   - [Iniciamos sesión con el nuevo usuario](#iniciamos-sesión-con-el-nuevo-usuario)
   - [Actualizamos el sistema](#actualizamos-el-sistema)
+  - [Instalación de drivers](#instalación-de-drivers)
+    - [Drivers base](#drivers-base)
+    - [Drivers de la targeta grafica](#drivers-de-la-targeta-grafica)
 - [Configuracion de un entorno de escritorio](#configuracion-de-un-entorno-de-escritorio)
   - [Instalacion de Xorg](#instalacion-de-xorg)
   - [Instalacion de GNOME](#instalacion-de-gnome)
   - [Instalacion de KDE Plasma](#instalacion-de-kde-plasma)
-- [Instalacion de drivers](#instalacion-de-drivers)
-  - [Drivers de la placa base](#drivers-de-la-placa-base)
-  - [Drivers de la targeta grafica](#drivers-de-la-targeta-grafica)
+  - [Instalación de QTile](#instalación-de-qtile)
   - [Instalación de optimus-manager](#instalación-de-optimus-manager)
   - [Icono de optimus mánager](#icono-de-optimus-mánager)
   - [Probar el rendimiento del sistema](#probar-el-rendimiento-del-sistema)
@@ -238,7 +239,7 @@ swapon /dev/sdxn
 Una vez tenemos todos los pasos anteriores cumplidos pasamos a finalmente instalar el sistema en las particiones que elegimos. Con *pacstrap* seleccionamos la ubicación de instalación (en mi caso */mnt*) y elegimos los paquetes a instalar:
 
 ~~~TEXT
-pacstrap /mnt base base-devel linux linux-firmware linux-headers nano networkmanager dialog bash-completion
+pacstrap /mnt base base-devel git linux linux-firmware linux-headers nano networkmanager dialog bash-completion
 ~~~
 
 ## Generar el archivo fstab
@@ -529,6 +530,80 @@ Luego, actualizamos la lista de repositorios y verificamos las actualizaciones:
 sudo pacman -Syu
 ~~~
 
+## Instalación de drivers
+
+### Drivers base
+
+Si ejecutamos:
+
+~~~TEXT
+sudo mkinitcpio -p linux
+~~~
+
+Y obtenemos una salida como la siguiente:
+
+~~~TEXT
+==> WARNING: Possibly missing firmware for module: aic94xx
+==> WARNING: Possibly missing firmware for module: wd719x
+==> WARNING: Possibly missing firmware for module: xhci_pci
+~~~
+
+Tenemos un problema con drivers que nos estan faltando. La solucion es instalarlos para tener el mejor rendimiento de nuestro hardware.
+
+Nos dirigimos a una carpeta temporal en donde descargar archivos, en mi caso */home/gabi/Descargas*:
+
+~~~TEXT
+cd Descargas
+~~~
+
+Y ahora luego de buscar los drivers en AUR o el repositorio oficial, los instalamos:
+
+~~~TEXT
+sudo pacman -S linux-firmware-qlogic
+
+git clone https://aur.archlinux.org/aic94xx-firmware.git
+cd aic94xx-firmware
+makepkg -si
+
+git clone https://aur.archlinux.org/wd719x-firmware.git
+cd wd719x-firmware
+makepkg -si
+
+git clone https://aur.archlinux.org/upd72020x-fw.git
+cd upd72020x-fw
+makepkg -si
+~~~
+
+### Drivers de la targeta grafica
+
+Primero instalamos las utilidades de mesa, esto nos servirá para haberiguar que gráfica esta renderizando el escritorio:
+
+~~~TEXT
+sudo pacman -S mesa-demos
+~~~
+
+Ejecutamos el comando siguiente:
+
+~~~TEXT
+glxinfo | grep "OpenGL renderer"
+~~~
+
+Obteniendo la salida:
+
+~~~TEXT
+OpenGL renderer string: Mesa Intel(R) HD Graphics 630 (KBL GT2)
+~~~
+
+Esto significa que estamos utilizando la integrada de INTEL para el video. Yo tengo una Notebook con gráficos dedicados Nvidia GTX 1050, ademas de una integragada HD630 de un i5 de 7ma generación.
+
+Para instalar los drivers de la tarjeta gráfica dedicada puedo ejecutar los siguientes comandos:
+
+~~~TEXT
+sudo pacman -S nvidia nvidia-utils nvidia-settings lib32-nvidia-utils virtualgl
+~~~
+
+Una vez instalado los drivers se debe reiniciar la PC antes de hacer cualquier otra cosa.
+
 # Configuracion de un entorno de escritorio
 
 Un entorno de escritorio es recomendado si la computadora en donde se esta instalando el sistema requiere de capacidades gráficas. Existen una variedad bastante grande de entornos de escritorios, a mi en lo personal me gustan dos: GNOME y KDE Plasma.
@@ -599,77 +674,47 @@ sudo systemctl enable cups
 sudo systemctl enable bluetooth
 ~~~
 
-# Instalacion de drivers
+## Instalación de QTile
 
-## Drivers de la placa base
-
-Si ejecutamos:
+Antes de instalar QTile primero tenemos que instalar un gestor de inicio de sesion, puede usar cualquiera, en mi caso prefiero utilizar lightdm:
 
 ~~~TEXT
-sudo mkinitcpio -p linux
+sudo pacman -S lightdm lightdm-slick-greeter
 ~~~
 
-Y obtenemos una salida como la siguiente:
+Luego de la instalación editamos el archivo de lightdm y le decimos que utilice el lightdm-slick-greeter:
 
 ~~~TEXT
-==> WARNING: Possibly missing firmware for module: aic94xx
-==> WARNING: Possibly missing firmware for module: wd719x
-==> WARNING: Possibly missing firmware for module: xhci_pci
+sudo nano /etc/lightdm/lightdm.conf
 ~~~
 
-Tenemos un problema con drivers que nos estan faltando. La solucion es instalarlos para tener el mejor rendimiento de nuestro hardware.
-
-Nos dirigimos a una carpeta temporal en donde descargar archivos, en mi caso */home/gabi/Descargas*:
+Nos vamos a la linea:
 
 ~~~TEXT
-cd Descargas
+#greeter-session=example-gtk-gnome
 ~~~
 
-Y ahora luego de buscar los drivers en AUR o el repositorio oficial, los instalamos:
+Y lo dejamos como:
 
 ~~~TEXT
-git clone https://aur.archlinux.org/aic94xx-firmware.git
-cd aic94xx-firmware
-makepkg -si
-
-git clone https://aur.archlinux.org/wd719x-firmware.git
-cd wd719x-firmware
-makepkg -si
-
-git clone https://aur.archlinux.org/upd72020x-fw.git
-cd upd72020x-fw
-makepkg -si
+greeter-session=lightdm-slick-greeter
 ~~~
 
-## Drivers de la targeta grafica
+Al final del archivo también podemos editar las lineas de resolución de la pantalla.
 
-Primero instalamos las utilidades de mesa, esto nos servirá para haberiguar que gráfica esta renderizando el escritorio:
+Iniciamos el servicio para el arranque con:
 
 ~~~TEXT
-sudo pacman -S mesa-demos
+sudo systemctl enable lightdm
 ~~~
 
-Ejecutamos el comando siguiente:
+Procedemos a instalar QTile mas una serie de paquetes necesarios:
 
 ~~~TEXT
-glxinfo | grep "OpenGL renderer"
+sudo pacman -S qtile alacritty rofi nitrogen ttf-dejavu ttf-liberation noto-fonts pulseaudio pavucontrol pamixer arandr udiskie network-manager-applet volumeicon cbatticon xorg-xinit thunar ranger gvfs lxappearance picom geeqie vlc
 ~~~
 
-Obteniendo la salida:
-
-~~~TEXT
-OpenGL renderer string: Mesa Intel(R) HD Graphics 630 (KBL GT2)
-~~~
-
-Esto significa que estamos utilizando la integrada de INTEL para el video. Yo tengo una Notebook con gráficos dedicados Nvidia GTX 1050, ademas de una integragada HD630 de un i5 de 7ma generación.
-
-Para instalar los drivers de la tarjeta gráfica dedicada puedo ejecutar los siguientes comandos:
-
-~~~TEXT
-sudo pacman -S nvidia nvidia-utils nvidia-settings lib32-nvidia-utils virtualgl
-~~~
-
-Una vez instalado los drivers se debe reiniciar la PC antes de hacer cualquier otra cosa.
+Ahora podemos reiniciar la PC para entrar en el modo gráfico.
 
 ## Instalación de optimus-manager
 
@@ -855,7 +900,7 @@ sudo pacman -S psensor
 La mejor opción para virtualizar en Linux. Lo primero que hacemos es instalar los paquetes necesarios:
 
 ~~~TEXT
-sudo pacman -S qemu qemu-arch-extra dmidecode ebtables dnsmasq libvirt bridge-utils openbsd-netcat radvd virt-manager ifplugd ifenslave tcl edk2-ovmf
+sudo pacman -S qemu qemu-arch-extra dmidecode ebtables dnsmasq libvirt bridge-utils openbsd-netcat radvd virt-manager virt-viewer ifplugd ifenslave tcl edk2-ovmf
 ~~~
 
 Nos preguntará si queremos reemplazar iptables por iptables-nft, le diremos que si para poder instalar ebtables, el cual es necesario para poder tener conectividad de red en las máquinas virtuales.
