@@ -84,7 +84,8 @@ Podemos obtener la última instantanea de la [página de Arch Linux](https://arc
 Luego de verificar que la ISO se descargo correctamente, podemos pasarla al USB con el comando *dd*:
 
 ~~~TEXT
-sudo dd if=ruta_de_la_iso of=dispositivo
+sudo dd if=ruta_de_la_iso of=dispositivo status=progress
+
 sync
 ~~~
 
@@ -239,7 +240,7 @@ swapon /dev/sdxn
 Una vez tenemos todos los pasos anteriores cumplidos pasamos a finalmente instalar el sistema en las particiones que elegimos. Con *pacstrap* seleccionamos la ubicación de instalación (en mi caso */mnt*) y elegimos los paquetes a instalar:
 
 ~~~TEXT
-pacstrap /mnt base base-devel git linux linux-firmware linux-headers nano networkmanager dialog bash-completion
+pacstrap /mnt base base-devel git linux linux-firmware linux-firmware-qlogic linux-headers nano networkmanager dialog bash-completion
 ~~~
 
 ## Generar el archivo fstab
@@ -494,7 +495,7 @@ EDITOR=nano visudo
 Y descomentamos la linea:
 
 ~~~TEXT
-%wheel ALL=(ALL) ALL
+% wheel ALL=(ALL) ALL
 ~~~
 
 Esto permitirá que usuarios que pertenescan al grupo wheel puedan usar sudo.
@@ -530,9 +531,7 @@ Luego, actualizamos la lista de repositorios y verificamos las actualizaciones:
 sudo pacman -Syu
 ~~~
 
-## Instalación de drivers
-
-### Drivers base
+## Drivers base
 
 Si ejecutamos:
 
@@ -548,19 +547,15 @@ Y obtenemos una salida como la siguiente:
 ==> WARNING: Possibly missing firmware for module: xhci_pci
 ~~~
 
-Tenemos un problema con drivers que nos estan faltando. La solucion es instalarlos para tener el mejor rendimiento de nuestro hardware.
-
-Nos dirigimos a una carpeta temporal en donde descargar archivos, en mi caso */home/gabi/Descargas*:
+Tenemos un problema con drivers que nos estan faltando. La solucion es instalarlos para tener el mejor rendimiento de nuestro hardware. Para ello nos dirigimos a una carpeta temporal en donde descargar archivos:
 
 ~~~TEXT
-cd Descargas
+cd
 ~~~
 
 Y ahora luego de buscar los drivers en AUR o el repositorio oficial, los instalamos:
 
 ~~~TEXT
-sudo pacman -S linux-firmware-qlogic
-
 git clone https://aur.archlinux.org/aic94xx-firmware.git
 cd aic94xx-firmware
 makepkg -si
@@ -574,41 +569,13 @@ cd upd72020x-fw
 makepkg -si
 ~~~
 
-### Drivers de la targeta grafica
-
-Primero instalamos las utilidades de mesa, esto nos servirá para haberiguar que gráfica esta renderizando el escritorio:
-
-~~~TEXT
-sudo pacman -S mesa-demos
-~~~
-
-Ejecutamos el comando siguiente:
-
-~~~TEXT
-glxinfo | grep "OpenGL renderer"
-~~~
-
-Obteniendo la salida:
-
-~~~TEXT
-OpenGL renderer string: Mesa Intel(R) HD Graphics 630 (KBL GT2)
-~~~
-
-Esto significa que estamos utilizando la integrada de INTEL para el video. Yo tengo una Notebook con gráficos dedicados Nvidia GTX 1050, ademas de una integragada HD630 de un i5 de 7ma generación.
-
-Para instalar los drivers de la tarjeta gráfica dedicada puedo ejecutar los siguientes comandos:
-
-~~~TEXT
-sudo pacman -S nvidia nvidia-utils nvidia-settings lib32-nvidia-utils virtualgl
-~~~
-
-Una vez instalado los drivers se debe reiniciar la PC antes de hacer cualquier otra cosa.
+Cuando se instalen los drivers ahora podemos borrar los directorios de compilación.
 
 # Configuracion de un entorno de escritorio
 
 Un entorno de escritorio es recomendado si la computadora en donde se esta instalando el sistema requiere de capacidades gráficas. Existen una variedad bastante grande de entornos de escritorios, a mi en lo personal me gustan dos: GNOME y KDE Plasma.
 
-Antes de instalar un entorno debemos tener el servidor de gráficos. Xorg esta en casi todo sistema, sin embargo, Wayland esta ganando terreno ultimamente.
+Antes de instalar un entorno debemos tener el servidor de gráficos. Xorg esta en casi todo sistema, sin embargo, Wayland esta ganando terreno últimamente.
 
 ## Instalacion de Xorg
 
@@ -715,6 +682,36 @@ sudo pacman -S qtile alacritty rofi nitrogen ttf-dejavu ttf-liberation noto-font
 ~~~
 
 Ahora podemos reiniciar la PC para entrar en el modo gráfico.
+
+## Drivers de la targeta grafica
+
+Primero instalamos las utilidades de mesa, esto nos servirá para haberiguar que gráfica esta renderizando el escritorio:
+
+~~~TEXT
+sudo pacman -S mesa-demos mesa-utils
+~~~
+
+Ejecutamos el comando siguiente:
+
+~~~TEXT
+glxinfo | grep "OpenGL renderer"
+~~~
+
+Obteniendo la salida:
+
+~~~TEXT
+OpenGL renderer string: Mesa Intel(R) HD Graphics 630 (KBL GT2)
+~~~
+
+Esto significa que estamos utilizando la integrada de INTEL para el video. Yo tengo una Notebook con gráficos dedicados Nvidia GTX 1050, ademas de una integragada HD630 de un i5 de 7ma generación.
+
+Para instalar los drivers de la tarjeta gráfica dedicada puedo ejecutar los siguientes comandos:
+
+~~~TEXT
+sudo pacman -S nvidia nvidia-utils nvidia-settings lib32-nvidia-utils virtualgl
+~~~
+
+Una vez instalado los drivers se debe reiniciar la PC antes de hacer cualquier otra cosa.
 
 ## Instalación de optimus-manager
 
@@ -852,26 +849,6 @@ Podemos instalarlo del siguiente repositorio de AUR:
 ~~~TEXT
 git clone https://aur.archlinux.org/yay.git
 cd yay
-makepkg -si
-~~~
-
-## Octopi
-
-Octopi es un frontend para pacman muy poderoso. Con esta aplicación podremos administrar nuestra paqueteria de forma amigables.
-
-Podemos instalarlo desde Yay o sino clonando el repo.
-
-Con yay
-
-~~~TEXT
-yay -S octopi
-~~~
-
-Manualmente:
-
-~~~TEXT
-git clone https://aur.archlinux.org/octopi.git
-cd octopi
 makepkg -si
 ~~~
 
