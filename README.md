@@ -31,14 +31,13 @@
   - [Añadimos a sudo el nuevo usuario](#añadimos-a-sudo-el-nuevo-usuario)
   - [Iniciamos sesión con el nuevo usuario](#iniciamos-sesión-con-el-nuevo-usuario)
   - [Actualizamos el sistema](#actualizamos-el-sistema)
-  - [Instalación de drivers](#instalación-de-drivers)
-    - [Drivers base](#drivers-base)
-    - [Drivers de la targeta grafica](#drivers-de-la-targeta-grafica)
+  - [Drivers base](#drivers-base)
 - [Configuracion de un entorno de escritorio](#configuracion-de-un-entorno-de-escritorio)
   - [Instalacion de Xorg](#instalacion-de-xorg)
   - [Instalacion de GNOME](#instalacion-de-gnome)
   - [Instalacion de KDE Plasma](#instalacion-de-kde-plasma)
   - [Instalación de QTile](#instalación-de-qtile)
+  - [Drivers de la targeta grafica](#drivers-de-la-targeta-grafica)
   - [Instalación de optimus-manager](#instalación-de-optimus-manager)
   - [Icono de optimus mánager](#icono-de-optimus-mánager)
   - [Probar el rendimiento del sistema](#probar-el-rendimiento-del-sistema)
@@ -47,7 +46,6 @@
   - [Extenciones para GNOME Shell](#extenciones-para-gnome-shell)
   - [PAMAC para GNOME](#pamac-para-gnome)
   - [Yay como gestor de paquetes](#yay-como-gestor-de-paquetes)
-  - [Octopi](#octopi)
   - [Psensors](#psensors)
   - [Qemu/KVM](#qemukvm)
 - [Configuración para servidor](#configuración-para-servidor)
@@ -83,7 +81,7 @@ Podemos obtener la última instantanea de la [página de Arch Linux](https://arc
 
 Luego de verificar que la ISO se descargo correctamente, podemos pasarla al USB con el comando *dd*:
 
-~~~TEXT
+~~~BASH
 sudo dd if=ruta_de_la_iso of=dispositivo status=progress
 
 sync
@@ -99,7 +97,7 @@ Debemos bootear desde el USB para poder iniciar el proceso de instalación. Norm
 
 Es necesario primero que nada configurar la distribución del teclado para tener correctas las teclas. En el caso de un teclado *Español Latinoamerica*, el comando sería el siguiente:
 
-~~~TEXT
+~~~BASH
 loadkeys la-latin1
 ~~~
 
@@ -107,49 +105,49 @@ loadkeys la-latin1
 
 La instalación del sistema requiere conexión a internet para poder descargar todos los paquetes necesarios. Para verificar la conexión a internet ejecutamos:
 
-~~~TEXT
+~~~BASH
 ip a
 ~~~
 
 Si estamos conectados por ethernet (que es lo mas recomendable), la conexión se debería haber realizado automaticamente. De modo contrario se puede conectar a una red WiFi usando una utilidad de la instalación:
 
-~~~TEXT
+~~~BASH
 iwclt
 ~~~
 
 Cuando ingrese este comando se activará la utilidad, y podrá ver los dispositivos wireless disponibles en el equipo:
 
-~~~TEXT
+~~~BASH
 device list
 ~~~
 
 Puede escanear las redes disponibles:
 
-~~~TEXT
+~~~BASH
 station wlan0 scan
 ~~~
 
 Ahora espere unos 10 segundos a que termine el escaneo, luego podrá ver las redes disponibles:
 
-~~~TEXT
+~~~BASH
 station wlan0 get-networks
 ~~~
 
 Para conectarse a una red puede correr:
 
-~~~TEXT
+~~~BASH
 station wlan0 connect nombre_del_wifi
 ~~~
 
 Se le pedirá la contraseña, y se intentará conectar a la red indicada.Luego puede salir de la utilidad y volver a comprobar si tiene acceso a la red:
 
-~~~TEXT
+~~~BASH
 exit
 ~~~
 
 ## Actualizar el reloj del sistema
 
-~~~TEXT
+~~~BASH
 timedatectl set-ntp true
 ~~~
 
@@ -157,13 +155,13 @@ timedatectl set-ntp true
 
 Lo que se debe hacer ahora es crear las particiones de disco en donde se instalará el sistema. Podemos ver la cantidad de discos y sus particiones ejecutando:
 
-~~~TEXT
+~~~BASH
 lsblk
 ~~~
 
 La utilidad recomendada para crear particiones en sistemas GPT es *gdisk* y para MBR es *fdisk*.
 
-~~~TEXT
+~~~BASH
 gdisk /dev/sdx
 
 fdisk /dev/sdx
@@ -186,19 +184,19 @@ Una vez creamos las particiones que usaremos, procedemos a darles el formato cor
 
 Para particiones ext4:
 
-~~~TEXT
+~~~BASH
 mkfs.ext4 /dev/sdxn
 ~~~
 
 Para particiones fat32:
 
-~~~TEXT
+~~~BASH
 mkfs.fat -F32 /dev/sdxn
 ~~~
 
 Para particiones swap:
 
-~~~TEXT
+~~~BASH
 mkswap /dev/sdxn
 ~~~
 
@@ -208,20 +206,20 @@ Este es el paso previo a instalar el sistema, debemos montar las unidades config
 
 La particion del sistema raiz:
 
-~~~TEXT
+~~~BASH
 mount /dev/sdxn /mnt
 ~~~
 
 Para la partición UEFI, debemos crear una ruta especial bajo la raíz llamada */boot*:
 
-~~~TEXT
+~~~BASH
 mkdir /mnt/boot
 mount /dev/sdxn /mnt/boot
 ~~~
 
 Particiones extras como */home* o */opt* también deben estar dentro de la raíz:
 
-~~~TEXT
+~~~BASH
 mkdir /mnt/home
 mount /dev/sdxn /mnt/home
 
@@ -231,7 +229,7 @@ mount /dev/sdxn /mnt/opt
 
 Para la partición SWAP:
 
-~~~TEXT
+~~~BASH
 swapon /dev/sdxn
 ~~~
 
@@ -239,7 +237,7 @@ swapon /dev/sdxn
 
 Una vez tenemos todos los pasos anteriores cumplidos pasamos a finalmente instalar el sistema en las particiones que elegimos. Con *pacstrap* seleccionamos la ubicación de instalación (en mi caso */mnt*) y elegimos los paquetes a instalar:
 
-~~~TEXT
+~~~BASH
 pacstrap /mnt base base-devel git linux linux-firmware linux-firmware-qlogic linux-headers nano networkmanager dialog bash-completion
 ~~~
 
@@ -247,7 +245,7 @@ pacstrap /mnt base base-devel git linux linux-firmware linux-firmware-qlogic lin
 
 Para que las particiones se monten al arranque y cumplan con su función debemos generar el *fstab*:
 
-~~~TEXT
+~~~BASH
 genfstab -U /mnt >> /mnt/etc/fstab
 ~~~
 
@@ -255,19 +253,19 @@ genfstab -U /mnt >> /mnt/etc/fstab
 
 Para utilizar el sistema recien instalado, podemos utilizar el siguiente comando:
 
-~~~TEXT
-arch-chroot /mtn
+~~~BASH
+arch-chroot /mnt
 ~~~
 
 ## Configuramos la zona horaria
 
-~~~TEXT
+~~~BASH
 ln -sf /usr/share/zoneinfo/America/Argentina/Buenos_aires /etc/localtime
 ~~~
 
 ## Sincronizamos el reloj
 
-~~~TEXT
+~~~BASH
 hwclock --systohc
 ~~~
 
@@ -275,7 +273,7 @@ hwclock --systohc
 
 Lo primero que debemos hacer es seleccionar el idioma que utilizará el sistema:
 
-~~~TEXT
+~~~BASH
 nano /etc/locale.conf
 ~~~
 
@@ -287,7 +285,7 @@ LANG=es_AR.UTF-8
 
 Paso siguiente configuramos el archivo de locales. Debemos descomentar nuestro idioma preferido y tambien uno en ingles que será el base:
 
-~~~TEXT
+~~~BASH
 nano /etc/locale.gen
 ~~~
 
@@ -302,7 +300,7 @@ es_AR.UTF-8 UTF-8
 
 Ahora creamos un archivo para la distribución del teclado:
 
-~~~TEXT
+~~~BASH
 nano /etc/vconsole.conf
 ~~~
 
@@ -316,7 +314,7 @@ KEYMAP=la-latin1
 
 Generamos los archivos de configuración para establecer los cambios que generamos anteriormente:
 
-~~~TEXT
+~~~BASH
 locale-gen
 ~~~
 
@@ -324,7 +322,7 @@ locale-gen
 
 Debemos darle un nombre a nuestra PC, para que sea identificable para otros quipos, lo podemos hacer editando el archivo:
 
-~~~TEXT
+~~~BASH
 nano /etc/hostname
 ~~~
 
@@ -336,7 +334,7 @@ myhostname
 
 Lo mismo para el archivo de hosts, este configurará otras cuestiones para el *NetworkManager*:
 
-~~~TEXT
+~~~BASH
 nano /etc/hosts
 ~~~
 
@@ -352,7 +350,7 @@ Y añadimos lo siguiente:
 
 Debemos habilitar el servicio de administración de redes, yo personalmente prefiero NetworkManger:
 
-~~~TEXT
+~~~BASH
 systemctl enable NetworkManager
 ~~~
 
@@ -360,7 +358,7 @@ systemctl enable NetworkManager
 
 Ingrese la contraseña de usuario root que prefiera, esto podemos eliminarlo mas tarde por seguridad, en un inicio vamos a logearnos en nuestro sistema como root:
 
-~~~TEXT
+~~~BASH
 passwd
 ~~~
 
@@ -368,13 +366,13 @@ passwd
 
 A continuación se instalara GRUB para UEFI o BIOS, esto permitirá al sistema arrancar:
 
-~~~TEXT
+~~~BASH
 pacman -S grub ntfs-3g
 ~~~
 
 Si tenes un sistema UEFI adicional debes instalar:
 
-~~~TEXT
+~~~BASH
 pacman -S efibootmgr
 ~~~
 
@@ -382,56 +380,56 @@ Es recomendable también instalar los microcodes, según la versión del procesa
 
 Para AMD:
 
-~~~TEXT
+~~~BASH
 pacman -S amd-ucode
 ~~~
 
 Para INTEL:
 
-~~~TEXT
+~~~BASH
 pacman -S intel-ucode
 ~~~
 
 Para sistemas UEFI configure el grub para su sistema bajo la ruta de la partición EFI:
 
-~~~TEXT
+~~~BASH
 grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id='arch'
 ~~~
 
 Para sistemas BIOS debemos instalar el grub en la parcición MBR del disco de arranque directamente:
 
-~~~TEXT
+~~~BASH
 grub-install --target=i386-pc /dev/sdx
 ~~~
 
 Si tenes otro sistema operativo en alguna otra unidad o partición y queres que grub la detecte, instale el siguiente paquete:
 
-~~~TEXT
+~~~BASH
 pacman -S os-prober
 ~~~
 
 Luego se tiene que montar las unidades con sistema operativo:
 
-~~~TEXT
+~~~BASH
 mkdir /mnt/extra_os
 mount /dev/sdxn /mnt/extra_os
 ~~~
 
 Corremos os-prober para comprobar que sistema hay instalado:
 
-~~~TEXT
+~~~BASH
 os-prober
 ~~~
 
 Ahora generamos la configuracion básica del grub:
 
-~~~TEXT
+~~~BASH
 grub-mkconfig -o /boot/grub/grub.cfg
 ~~~
 
 Como último paso si tu sistema es UEFI se debe copiar el archivo de inicio:
 
-~~~TEXT
+~~~BASH
 mkdir /boot/EFI/boot
 cp /boot/EFI/arch/grubx64.efi /boot/EFI/boot/bootx64.efi
 ~~~
@@ -440,19 +438,19 @@ cp /boot/EFI/arch/grubx64.efi /boot/EFI/boot/bootx64.efi
 
 Salimos de arch-chroot:
 
-~~~TEXT
+~~~BASH
 exit
 ~~~
 
 Desmontamos todas las unidades de la instalación:
 
-~~~TEXT
+~~~BASH
 umount -R /mnt
 ~~~
 
 Y por último apagamos el equipo:
 
-~~~TEXT
+~~~BASH
 systemctl poweroff
 ~~~
 
@@ -464,7 +462,7 @@ Ahora desconectamos el medio de instalación y ya podemos volver a iniciar el si
 
 Usando NetworkManager podemos conectarnos a una red:
 
-~~~TEXT
+~~~BASH
 nmcli dev wifi connect nombre_de_wifi password contraseña
 ~~~
 
@@ -472,7 +470,7 @@ nmcli dev wifi connect nombre_de_wifi password contraseña
 
 Una nueva instalación te deja solo con la cuenta de superusuario, más conocida como *root*. Iniciar sesión como *root* durante períodos prolongados de tiempo, posiblemente incluso exponerlo a través de SSH en un servidor, es inseguro. Es por eso que debemos crear un usuario para nosotros:
 
-~~~TEXT
+~~~BASH
 useradd -m -G ftp,http,log,rfkill,sys,uucp,audio,storage,video,wheel,games,power,scanner,kvm -s /bin/bash nombre_usuario
 ~~~
 
@@ -480,7 +478,7 @@ useradd -m -G ftp,http,log,rfkill,sys,uucp,audio,storage,video,wheel,games,power
 
 Para mayor seguridad es recomendable que le pongamos contraseña al nuevo usuario creado.
 
-~~~TEXT
+~~~BASH
 passwd nombre_usuario
 ~~~
 
@@ -488,7 +486,7 @@ passwd nombre_usuario
 
 Editamos el archivo de sudo y luego descomentamos la linea que habilita al grupo wheel:
 
-~~~TEXT
+~~~BASH
 EDITOR=nano visudo
 ~~~
 
@@ -504,7 +502,7 @@ Esto permitirá que usuarios que pertenescan al grupo wheel puedan usar sudo.
 
 Salimos de la sesión de root:
 
-~~~TEXT
+~~~BASH
 exit
 ~~~
 
@@ -514,7 +512,7 @@ Y nos logeamos con el nuevo usuario y contraseña.
 
 Ahora que tenemos el sistema instalado y configurado con una cuenta de usuario válida, lo que debemos hacer es comprobar si existen actualizaciones disponibles. Pero antes, es buena idea habilitar el soporte multilib:
 
-~~~TEXT
+~~~BASH
 sudo nano /etc/pacman.conf
 ~~~
 
@@ -527,7 +525,7 @@ Include = /etc/pacman.d/mirrorlist
 
 Luego, actualizamos la lista de repositorios y verificamos las actualizaciones:
 
-~~~TEXT
+~~~BASH
 sudo pacman -Syu
 ~~~
 
@@ -535,7 +533,7 @@ sudo pacman -Syu
 
 Si ejecutamos:
 
-~~~TEXT
+~~~BASH
 sudo mkinitcpio -p linux
 ~~~
 
@@ -549,13 +547,13 @@ Y obtenemos una salida como la siguiente:
 
 Tenemos un problema con drivers que nos estan faltando. La solucion es instalarlos para tener el mejor rendimiento de nuestro hardware. Para ello nos dirigimos a una carpeta temporal en donde descargar archivos:
 
-~~~TEXT
+~~~BASH
 cd
 ~~~
 
 Y ahora luego de buscar los drivers en AUR o el repositorio oficial, los instalamos:
 
-~~~TEXT
+~~~BASH
 git clone https://aur.archlinux.org/aic94xx-firmware.git
 cd aic94xx-firmware
 makepkg -si
@@ -581,7 +579,7 @@ Antes de instalar un entorno debemos tener el servidor de gráficos. Xorg esta e
 
 Podemos instalar el servidor de ventanas X con el comando:
 
-~~~TEXT
+~~~BASH
 sudo pacman -S xorg
 ~~~
 
@@ -589,19 +587,19 @@ sudo pacman -S xorg
 
 Si GNOME es tu escritorio, lo podes instalar tan facil como el siguiente comando:
 
-~~~TEXT
+~~~BASH
 sudo pacman -S gnome gnome-extra
 ~~~
 
 También, recomiendo instalar el paquete de iconos Papirus y la utilidad de impresoras CUPS:
 
-~~~TEXT
+~~~BASH
 sudo pacman -S papirus-icon-theme cups ufw
 ~~~
 
 Por último, debemos iniciar el servicio de administrador de sesiones y de impresión:
 
-~~~TEXT
+~~~BASH
 sudo systemctl enable gdm
 sudo systemctl enable cups
 sudo systemctl enable bluetooth
@@ -611,31 +609,31 @@ sudo systemctl enable bluetooth
 
 Si queres tener en tu carpeta de usuario, carpetas como *Documentos*, *Descargas*, *Música*, *etc*. Instalamos el servicios de carpetas de usuario:
 
-~~~TEXT
+~~~BASH
 sudo pacman -S xdg-user-dirs
 ~~~
 
 Y corremos la utilidad:
 
-~~~TEXT
+~~~BASH
 xdg-user-dirs-update
 ~~~
 
 Para instalar KDE Plasma ejecutamos el siguiente comando:
 
-~~~TEXT
+~~~BASH
 sudo pacman -S plasma plasma-meta kde-applications kde-applications-meta packagekit-qt5
 ~~~
 
 Es recomendable instalar temas tanto para Qt y Gtk, ademas de otros paquetes base:
 
-~~~TEXT
+~~~BASH
 sudo pacman -S papirus-icon-theme arc-gtk-theme cups ufw
 ~~~
 
 Por último habilitamos servicios del sistema:
 
-~~~TEXT
+~~~BASH
 sudo systemctl enable sddm
 sudo systemctl enable cups
 sudo systemctl enable bluetooth
@@ -645,13 +643,13 @@ sudo systemctl enable bluetooth
 
 Antes de instalar QTile primero tenemos que instalar un gestor de inicio de sesion, puede usar cualquiera, en mi caso prefiero utilizar lightdm:
 
-~~~TEXT
+~~~BASH
 sudo pacman -S lightdm lightdm-slick-greeter
 ~~~
 
 Luego de la instalación editamos el archivo de lightdm y le decimos que utilice el lightdm-slick-greeter:
 
-~~~TEXT
+~~~BASH
 sudo nano /etc/lightdm/lightdm.conf
 ~~~
 
@@ -671,13 +669,13 @@ Al final del archivo también podemos editar las lineas de resolución de la pan
 
 Iniciamos el servicio para el arranque con:
 
-~~~TEXT
+~~~BASH
 sudo systemctl enable lightdm
 ~~~
 
 Procedemos a instalar QTile mas una serie de paquetes necesarios:
 
-~~~TEXT
+~~~BASH
 sudo pacman -S qtile alacritty rofi nitrogen ttf-dejavu ttf-liberation noto-fonts pulseaudio pavucontrol pamixer arandr udiskie network-manager-applet volumeicon cbatticon xorg-xinit thunar ranger gvfs lxappearance picom geeqie vlc
 ~~~
 
@@ -687,13 +685,13 @@ Ahora podemos reiniciar la PC para entrar en el modo gráfico.
 
 Primero instalamos las utilidades de mesa, esto nos servirá para haberiguar que gráfica esta renderizando el escritorio:
 
-~~~TEXT
+~~~BASH
 sudo pacman -S mesa-demos mesa-utils
 ~~~
 
 Ejecutamos el comando siguiente:
 
-~~~TEXT
+~~~BASH
 glxinfo | grep "OpenGL renderer"
 ~~~
 
@@ -707,7 +705,7 @@ Esto significa que estamos utilizando la integrada de INTEL para el video. Yo te
 
 Para instalar los drivers de la tarjeta gráfica dedicada puedo ejecutar los siguientes comandos:
 
-~~~TEXT
+~~~BASH
 sudo pacman -S nvidia nvidia-utils nvidia-settings lib32-nvidia-utils virtualgl
 ~~~
 
@@ -719,7 +717,7 @@ Este programa de Linux proporciona una solución para el cambio de GPU en laptop
 
 Para usuarios de **GNOME** primero hay que instalar un gestor de sesiones parcheado:
 
-~~~TEXT
+~~~BASH
 git clone https://aur.archlinux.org/gdm-prime.git
 cd gdm-prime
 makepkg -si
@@ -727,7 +725,7 @@ makepkg -si
 
 Una vez instalada la utilidad, editamos el archivo */etc/gdm/custom.conf*:
 
-~~~TEXT
+~~~BASH
 sudo nano /etc/gdm/custom.conf
 ~~~
 
@@ -741,7 +739,7 @@ Se tiene que comprobar que no exista el archivo */etc/X11/xorg.conf*, si es asi,
 
 Entonoces para instalarlo ejecutamos:
 
-~~~TEXT
+~~~BASH
 git clone https://aur.archlinux.org/optimus-manager.git
 cd optimus-manager
 makepkg -si
@@ -751,7 +749,7 @@ Despues de instalar se tiene que **reiniciar el ordenador.**
 
 Una vez reiniciado ahora podemos ejecutar los siguientes comandos para cambiar el modo de uso de la gráfica:
 
-~~~TEXT
+~~~BASH
 optimus-manager --switch nvidia
 
 optimus-manager --switch integrated
@@ -765,14 +763,14 @@ El programa *optimus-manager-qt* proporciona un icono en la bandeja del sistema 
 
 Antes de instalar este software, es necesario tener un complemento de iconos en el shell activado, de otra manera no se podrá utilizar por mas que este programa este cargado en memoria:
 
-~~~TEXT
+~~~BASH
 git clone https://aur.archlinux.org/optimus-manager-qt.git
 cd optimus-manager-qt
 ~~~
 
 Antes de instalar si estamos usando el escritorio de KDE Plasma tenemos que habilitar las opciones extendidas:
 
-~~~TEXT
+~~~BASH
 nano PKGBUILD
 ~~~
 
@@ -784,7 +782,7 @@ _with_plasma=true
 
 Ahora si podemos instalar, si tu escritorio no es KDE pasma el *PKGBUILD* no se toca:
 
-~~~TEXT
+~~~BASH
 makepkg -si
 ~~~
 
@@ -794,7 +792,7 @@ Los siguientes comandos proporcionan información útil sobre el sistema gráfic
 
 Informacion de la placa utilizada:
 
-~~~TEXT
+~~~BASH
 glxinfo | grep -i vendor
 glxinfo | grep render
 glxinfo | grep direct
@@ -803,7 +801,7 @@ glxinfo | grep OpenGL
 
 Benchmarks:
 
-~~~TEXT
+~~~BASH
 glxgears -info
 glxspheres64 -info
 ~~~
@@ -814,7 +812,7 @@ glxspheres64 -info
 
 El navegador por excelencia *(por ahora)*:
 
-~~~TEXT
+~~~BASH
 git clone https://aur.archlinux.org/google-chrome.git
 cd google-chrome
 makepkg -si
@@ -832,7 +830,7 @@ Lo mas recomendable es ir a Google Chrome e instalar el Plugin de Gnome Shell Ex
 
 Este gestor de paquetes y actualizaciones, es muy completo y tiene soporte para Flatpak, Snap y AUR. Así que es muy bueno y recomendable:
 
-~~~TEXT
+~~~BASH
 git clone https://aur.archlinux.org/pamac-all.git
 cd pamac-all
 makepkg -si
@@ -846,7 +844,7 @@ Yay es un asistente de instalación de paquetes para ArchLinux con capacidad par
 
 Podemos instalarlo del siguiente repositorio de AUR:
 
-~~~TEXT
+~~~BASH
 git clone https://aur.archlinux.org/yay.git
 cd yay
 makepkg -si
@@ -856,19 +854,19 @@ makepkg -si
 
 Este software permite la monitorización de sensores de temperatura:
 
-~~~TEXT
+~~~BASH
 sudo pacman -S lm_sensors
 ~~~
 
 Escaneamos todos los sensores de la PC:
 
-~~~TEXT
+~~~BASH
 sudo sensors-detect
 ~~~
 
 Por último instalamos la utilidad de Psensors.
 
-~~~TEXT
+~~~BASH
 sudo pacman -S psensor
 ~~~
 
@@ -876,7 +874,7 @@ sudo pacman -S psensor
 
 La mejor opción para virtualizar en Linux. Lo primero que hacemos es instalar los paquetes necesarios:
 
-~~~TEXT
+~~~BASH
 sudo pacman -S qemu qemu-arch-extra dmidecode ebtables dnsmasq libvirt bridge-utils openbsd-netcat radvd virt-manager virt-viewer ifplugd ifenslave tcl edk2-ovmf
 ~~~
 
@@ -884,35 +882,35 @@ Nos preguntará si queremos reemplazar iptables por iptables-nft, le diremos que
 
 Agregamos nuestro usuario a los grupos kvm y polkitd:
 
-~~~TEXT
+~~~BASH
 sudo usermod -aG kvm $USER
 sudo usermod -aG polkitd $USER
 ~~~
 
 Cargamos los módulos necesarios. En caso de tener un procesador intel sería así:
 
-~~~TEXT
+~~~BASH
 sudo modprobe kvm-intel
 sudo modprobe kvm
 ~~~
 
 En caso de ser AMD sería así:
 
-~~~TEXT
+~~~BASH
 sudo modprobe kvm-amd
 sudo modprobe kvm
 ~~~
 
 Ahora habilitamos el servicio:
 
-~~~TEXT
+~~~BASH
 sudo systemctl enable libvirtd
 sudo systemctl start libvirtd
 ~~~
 
 Le damos permiso a nuestro usuario para poder gestionar máquinas virtuales mediante el siguiente archivo:
 
-~~~TEXT
+~~~BASH
 sudo nano /etc/polkit-1/rules.d/50-org.libvirt.unix.manage.rules
 ~~~
 
@@ -937,7 +935,7 @@ Reemplazamos NOMBRE_USUARIO por nuestro nombre de usuario. Reiniciamos y abrimos
 
 Htop es un programa para ver por consola el estado rápido del sistema y los procesos en ejecución:
 
-~~~TEXT
+~~~BASH
 sudo pacman -S htop
 ~~~
 
@@ -945,7 +943,7 @@ sudo pacman -S htop
 
 Screen permite en una misma sesión de ssh tener multiples espacios de trabajo, esto es ideal para mantener el trabajo aunque la conexión se cierre repentinamente:
 
-~~~TEXT
+~~~BASH
 sudo pacman -S screen
 ~~~
 
@@ -953,7 +951,7 @@ sudo pacman -S screen
 
 Mc es como un administrador de archivos pero para consola, muy util:
 
-~~~TEXT
+~~~BASH
 sudo pacman -S mc
 ~~~
 
@@ -963,13 +961,13 @@ Si disponemos o damos algún servicio, seguramente necesitaremos dejar una IP fi
 
 Primero listamos las conexiones que tenemos:
 
-~~~TEXT
+~~~BASH
 nmcli connection
 ~~~
 
 Vamos a utilizar el nombre de la conexión para setear los parametros en el *nmcli*:
 
-~~~TEXT
+~~~BASH
 nmcli connection modify "Conexión cableada 1" \
 ipv4.addresses "192.168.1.200/24" \
 ipv4.gateway "192.168.1.1" \
@@ -983,13 +981,13 @@ Todos los archivos de configuración se guardan en */etc/NetworkManager/system-c
 
 Primero instalamos el servidor:
 
-~~~TEXT
+~~~BASH
 sudo pacman -S openssh
 ~~~
 
 Luego habilitamos el servicio:
 
-~~~TEXT
+~~~BASH
 sudo systemctl enable sshd
 ~~~
 
@@ -997,7 +995,7 @@ sudo systemctl enable sshd
 
 Para generar un conjunto de llaves SSH ejecutamos:
 
-~~~TEXT
+~~~BASH
 ssh-keygen -t rsa -b 4096 -C gabi -f ~/.ssh/id_rsa_gabi-sv
 
 ssh-copy-id -i ~/.ssh/id_rsa_gabi-sv gabi@192.168.1.200
@@ -1009,7 +1007,7 @@ Si se esta montando un servidor de archivos y tenes varios discos, lo mas seguro
 
 Para la gestión de un RAID vamos a utilizar *mdadm*:
 
-~~~TEXT
+~~~BASH
 sudo pacman -S mdadm
 ~~~
 
@@ -1017,25 +1015,25 @@ Para preparar nuestros discos debemos crear las particiones con la utilidad *gdi
 
 Cuando tengamos los discos listos, vamos a crear la unidad RAID, en mi caso creo un RAID5 con 4 discos:
 
-~~~TEXT
+~~~BASH
 sudo mdadm --create --verbose --level=5 --chunk=512 --raid-devices=4 /dev/md/datos /dev/sdb1 /dev/sdc1 /dev/sdd1 /dev/sde1
 ~~~
 
 Cuando el proceso inicie, la sincronización demorará un tiempo largo, podemos ver el proceso con:
 
-~~~TEXT
+~~~BASH
 cat /proc/mdstat
 ~~~
 
 Una vez el proceso termine, debemos establecer la configuración para que el RAID este configurado con cada inicio del sistema, para eso ejecutamos el comando:
 
-~~~TEXT
+~~~BASH
 sudo mdadm --detail --scan
 ~~~
 
 Y con la salida que nos da este comando editamos el archivo */etc/mdadm/mdadm.conf*:
 
-~~~TEXT
+~~~BASH
 sudo nano /etc/mdadm.conf
 ~~~
 
@@ -1047,13 +1045,13 @@ ARRAY /dev/md/datos metadata=1.2 spares=1 name=gabi-sv:datos UUID=4d255030:3d4ac
 
 Le damos un formato a nuestro RAID:
 
-~~~TEXT
+~~~BASH
 sudo mkfs.ext4 -v -L datos -b 4096 -E stride=128,stripe-width=384 /dev/md/datos
 ~~~
 
 Creamos una carpeta y montamos el sistema:
 
-~~~TEXT
+~~~BASH
 sudo mkdir /mnt/datos
 sudo mount /dev/md/datos /mnt/datos
 ~~~
@@ -1066,7 +1064,7 @@ UUID=d50ae083-8ab7-47ba-82dc-fafe85ded302 /mnt/datos ext4 rw,relatime 0 1
 
 Podemos obtener el UUID de nuestro RAID con el comando:
 
-~~~TEXT
+~~~BASH
 sudo blkid
 ~~~
 
@@ -1080,7 +1078,7 @@ Samba es el conjunto de programas de interoperabilidad estándar de Windows para
 
 Para configurar Samba se tiene que instalar el paquete:
 
-~~~TEXT
+~~~BASH
 sudo pacman -S samba
 ~~~
 
@@ -1088,7 +1086,7 @@ Samba se configura en */etc/samba/smb.conf*, que está ampliamente documentado e
 
 Luego de crear el archivo habilitamos los servicios:
 
-~~~TEXT
+~~~BASH
 sudo systemctl enable smb
 sudo systemctl enable nmb
 sudo systemctl enable avahi-daemon
@@ -1096,7 +1094,7 @@ sudo systemctl enable avahi-daemon
 
 Podemos también iniciarlos:
 
-~~~TEXT
+~~~BASH
 sudo systemctl start smb
 sudo systemctl start nmb
 sudo systemctl start avahi-daemon
@@ -1104,31 +1102,31 @@ sudo systemctl start avahi-daemon
 
 Para agregar usuarios a samba estos deben ser usuarios de linux, para añadir usuarios a linux podemos hacerlo con:
 
-~~~TEXT
+~~~BASH
 sudo useradd nombre_usuario
 ~~~
 
 Luego creamos el usuario en samba:
 
-~~~TEXT
+~~~BASH
 sudo smbpasswd -a nombre_usuario
 ~~~
 
 Podemos listar los usarios con:
 
-~~~TEXT
+~~~BASH
 sudo pdbedit -L
 ~~~
 
 Podemos crear también grupos:
 
-~~~TEXT
+~~~BASH
 sudo groupadd grupo
 ~~~
 
 Para grupos de samba:
 
-~~~TEXT
+~~~BASH
 sudo gpasswd grupo -a nombre_usuario
 ~~~
 
@@ -1140,13 +1138,13 @@ La placa base de la computadora de destino y el controlador de interfaz de red d
 
 Para averiguar el estado de la interfaz de red debemos instalar *ethtool*:
 
-~~~TEXT
+~~~BASH
 sudo pacman -S ethtool
 ~~~
 
 Cuando la herramienta este instalada podemos comprobar el estado de alguna placa de red con el comando:
 
-~~~TEXT
+~~~BASH
 sudo ethtool nombre_interfaz
 ~~~
 
@@ -1168,7 +1166,7 @@ Esta latra que le sigue a al campo dice en que estado esta la placa de red:
 
 Para WOL se requiere que este en modo g. Podemos cambiar el estado de la placa con:
 
-~~~TEXT
+~~~BASH
 sudo ethtool -s nombre_interfaz wol g
 ~~~
 
@@ -1192,7 +1190,7 @@ WantedBy=multi-user.target
 
 Entonces podemos habilitar el servicio con:
 
-~~~TEXT
+~~~BASH
 sudo systemctl enable wol@nombre_interfaz
 ~~~
 
@@ -1202,7 +1200,7 @@ Y listo ya podemos hacer Wake On LAN.
 
 Para configurar una UPS en nuestro servidor tenemos que instalar el paquete *nut*:
 
-~~~TEXT
+~~~BASH
 sudo pacman -S nut
 ~~~
 
@@ -1225,6 +1223,6 @@ Para configurar la UPS lo hacemos en el archivo */etc/nut/ups.conf*:
 
 Para iniciar el programa ejecutamos:
 
-~~~TEXT
+~~~BASH
 sudo upsdrvctl start
 ~~~
