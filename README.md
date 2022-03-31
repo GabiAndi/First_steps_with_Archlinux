@@ -46,6 +46,14 @@
   - [Extenciones para GNOME Shell](#extenciones-para-gnome-shell)
   - [PAMAC para GNOME](#pamac-para-gnome)
   - [Yay como gestor de paquetes](#yay-como-gestor-de-paquetes)
+  - [ZSH](#zsh)
+    - [Instalación](#instalación-1)
+    - [ZSH como shell predeterminada](#zsh-como-shell-predeterminada)
+    - [Configuración](#configuración)
+    - [Powerlevel10k](#powerlevel10k)
+    - [Resaltado de sintaxis](#resaltado-de-sintaxis)
+    - [Sugerir comandos](#sugerir-comandos)
+  - [VS Code](#vs-code)
   - [Psensors](#psensors)
   - [Qemu/KVM](#qemukvm)
 - [Configuración para servidor](#configuración-para-servidor)
@@ -848,6 +856,101 @@ Podemos instalarlo del siguiente repositorio de AUR:
 git clone https://aur.archlinux.org/yay.git
 cd yay
 makepkg -si
+~~~
+
+## ZSH
+
+Z shell (o simplemente zsh) es un potente intérprete de comandos para sistemas operativos de tipo Unix. Zsh se diseñó para poder usarse interactivamente. Se le han incorporado muchas de las características principales de otras shells de Unix como bash, ksh, o tcsh y además posee características propias originales.
+
+### Instalación
+
+Para poder instalarla basta con ejecutar:
+
+~~~BASH
+sudo pacman -S zsh
+~~~
+
+### ZSH como shell predeterminada
+
+Una vez instalado el paquete zsh debemos hacer que sea la nueva shell de nuestro sistema, podemos ver las shells instalas con el comando *chsh*:
+
+~~~BASH
+chsh -l
+~~~
+
+~~~BASH
+chsh -s /bin/zsh
+~~~
+
+### Configuración
+
+La primera vez que ejecutemos zsh nos mostrará un asistente para una primera configuracion básica de zsh, donde deberemos de responder a una serie de preguntas para establecer el tamaño del historial, personalizar el número de líneas a guardar, etc.
+
+Si quieres ejecutar el asistente de forma manual puedes ejecutar:
+
+~~~BASH
+autoload -Uz zsh-newuser-install
+zsh-newuser-install -f
+~~~
+
+### Powerlevel10k
+
+Te recomiendo que instales la versión desde su [repositorio](https://github.com/romkatv/powerlevel10k/), ya que el paquete comunitario *zsh-theme-powerlevel10k* históricamente se ha estado rompiendo con frecuencia y durante largos períodos de tiempo. No lo uses.
+
+Su instalación es muy simple, introduce el siguiente comando en la terminal:
+
+~~~BASH
+yay -S zsh-theme-powerlevel10k-git powerline-common powerline-fonts awesome-terminal-fonts ttf-meslo-nerd-font-powerlevel10k
+~~~
+
+Cuando finalice la instalación vuelve a poner en la terminal;
+
+~~~BASH
+echo 'source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme' >> ~/.zshrc
+~~~
+
+Disponemos de un wizard para ayudarnos a configurar nuestro prompt, para ello como terminamos la instalación, debemos reiniciar la terminal. Si luego d hacer esto el wizard no aparece, simplemente ejecuta:
+
+~~~BASH
+p10k configure
+~~~
+
+### Resaltado de sintaxis
+
+Si quieres disponer de un resaltado de sintaxis para la shell al igual que en Fish pero para Zsh, puedes instalar *zsh-syntax-highlighting* desde los repositorios:
+
+~~~BASH
+sudo pacman -S zsh-syntax-highlighting
+~~~
+
+Y añadimos la configuración al *.zshrc*:
+
+~~~TEXT
+source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+~~~
+
+### Sugerir comandos
+
+Busca en los repositorios oficiales el paquete *zsh-autosuggestions* e instálalo:
+
+~~~BASH
+sudo pacman -S zsh-autosuggestions
+~~~
+
+Y añadimos la configuración al *.zshrc*:
+
+~~~TEXT
+source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+~~~
+
+## VS Code
+
+Visual Studio Code es un editor de código fuente desarrollado por Microsoft para Windows, Linux, macOS y Web. Incluye soporte para la depuración, control integrado de Git, resaltado de sintaxis, finalización inteligente de código, fragmentos y refactorización de código. Se puede instalar de la siguiente manera:
+
+~~~BASH
+sudo pacman -S gnome-keyring libsecret libgnome-keyring
+
+yay -S visual-studio-code-bin
 ~~~
 
 ## Psensors
