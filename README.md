@@ -32,10 +32,10 @@
   - [Iniciamos sesión con el nuevo usuario](#iniciamos-sesión-con-el-nuevo-usuario)
   - [Actualizamos el sistema](#actualizamos-el-sistema)
   - [Drivers base](#drivers-base)
-- [Configuracion de un entorno de escritorio](#configuracion-de-un-entorno-de-escritorio)
-  - [Instalacion de Xorg](#instalacion-de-xorg)
-  - [Instalacion de GNOME](#instalacion-de-gnome)
-  - [Instalacion de KDE Plasma](#instalacion-de-kde-plasma)
+- [Configuración de un entorno de escritorio](#configuración-de-un-entorno-de-escritorio)
+  - [Instalación de Xorg](#instalación-de-xorg)
+  - [Instalación de GNOME](#instalación-de-gnome)
+  - [Instalación de KDE Plasma](#instalación-de-kde-plasma)
   - [Instalación de QTile](#instalación-de-qtile)
   - [Drivers de la targeta grafica](#drivers-de-la-targeta-grafica)
   - [Instalación de optimus-manager](#instalación-de-optimus-manager)
@@ -46,10 +46,13 @@
   - [Extenciones para GNOME Shell](#extenciones-para-gnome-shell)
   - [PAMAC para GNOME](#pamac-para-gnome)
   - [Yay como gestor de paquetes](#yay-como-gestor-de-paquetes)
-  - [ZSH](#zsh)
+  - [Kitty](#kitty)
     - [Instalación](#instalación-1)
-    - [ZSH como shell predeterminada](#zsh-como-shell-predeterminada)
     - [Configuración](#configuración)
+  - [ZSH](#zsh)
+    - [Instalación](#instalación-2)
+    - [ZSH como shell predeterminada](#zsh-como-shell-predeterminada)
+    - [Configuración](#configuración-1)
     - [Powerlevel10k](#powerlevel10k)
     - [Resaltado de sintaxis](#resaltado-de-sintaxis)
     - [Sugerir comandos](#sugerir-comandos)
@@ -81,7 +84,7 @@ Para instalar y configurar este sistema operativo se necesita un grado de conoci
 
 # Instalación
 
-Este documentos es un resumen de instalación sacado de la [guía oficial de Arch Linux](https://wiki.archlinux.org/title/Installation_guide), en donde se detalla en profundida el proceso de instalación. Por lo que recomendamos que lea la documentación oficial antes de seguir los consejos de este post.
+Este documentos es un resumen de instalación sacado de la [guía oficial de Arch Linux](https://wiki.archlinux.org/title/Installation_guide), en donde se detalla en profundidad el proceso de instalación. Por lo que recomendamos que lea la documentación oficial antes de seguir los consejos de este post.
 
 ## Obtener la ISO
 
@@ -99,7 +102,7 @@ Usamos sync para asegurarnos de que todo el cache se guardo en el dispositivo.
 
 ## Iniciar desde el USB
 
-Debemos bootear desde el USB para poder iniciar el proceso de instalación. Normalmente, cuando se inicia el Arch Live preguntará con que opción queremos bootear. Luego de bootear el sistema inicia y nos mostrará una consola completamente vacia a la espera de comandos.
+Debemos bootear desde el USB para poder iniciar el proceso de instalación. Normalmente, cuando se inicia el Arch Live preguntará con que opción queremos bootear. Luego de bootear el sistema inicia y nos mostrará una consola completamente vacía a la espera de comandos.
 
 ## Configuración de teclado
 
@@ -117,7 +120,7 @@ La instalación del sistema requiere conexión a internet para poder descargar t
 ip a
 ~~~
 
-Si estamos conectados por ethernet (que es lo mas recomendable), la conexión se debería haber realizado automaticamente. De modo contrario se puede conectar a una red WiFi usando una utilidad de la instalación:
+Si estamos conectados por ethernet (que es lo mas recomendable), la conexión se debería haber realizado automáticamente. De modo contrario se puede conectar a una red WiFi usando una utilidad de la instalación:
 
 ~~~BASH
 iwclt
@@ -175,7 +178,7 @@ gdisk /dev/sdx
 fdisk /dev/sdx
 ~~~
 
-Para poder instalar cualquier distibución Linux en un Sistema EFI, debemos crear obligatoriamente las siguientes particiones:
+Para poder instalar cualquier distribución Linux en un Sistema EFI, debemos crear obligatoriamente las siguientes particiones:
 
 1. Partición EFI con formato FAT32 de al menos 500MB.
 2. Partición raíz con formato ext4.
@@ -212,7 +215,7 @@ mkswap /dev/sdxn
 
 Este es el paso previo a instalar el sistema, debemos montar las unidades configuradas anteriormente en las ubicaciones correspondientes, para luego generar el archivo de montajes al inicio del sistema. Para este tutorial, el sistema se montara en */mnt* del Live USB.
 
-La particion del sistema raiz:
+La partición del sistema raíz:
 
 ~~~BASH
 mount /dev/sdxn /mnt
@@ -259,7 +262,7 @@ genfstab -U /mnt >> /mnt/etc/fstab
 
 ## Cambiamos a la raíz de la instalación
 
-Para utilizar el sistema recien instalado, podemos utilizar el siguiente comando:
+Para utilizar el sistema recién instalado, podemos utilizar el siguiente comando:
 
 ~~~BASH
 arch-chroot /mnt
@@ -291,7 +294,7 @@ Y añadimos la siguiente linea:
 LANG=es_AR.UTF-8
 ~~~
 
-Paso siguiente configuramos el archivo de locales. Debemos descomentar nuestro idioma preferido y tambien uno en ingles que será el base:
+Paso siguiente configuramos el archivo de locales. Debemos descomentar nuestro idioma preferido y también uno en ingles que será el base:
 
 ~~~BASH
 nano /etc/locale.gen
@@ -328,7 +331,7 @@ locale-gen
 
 ## Configuración de la red
 
-Debemos darle un nombre a nuestra PC, para que sea identificable para otros quipos, lo podemos hacer editando el archivo:
+Debemos darle un nombre a nuestra PC, para que sea identificable para otros equipos, lo podemos hacer editando el archivo:
 
 ~~~BASH
 nano /etc/hostname
@@ -404,7 +407,7 @@ Para sistemas UEFI configure el grub para su sistema bajo la ruta de la partici�
 grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id='arch'
 ~~~
 
-Para sistemas BIOS debemos instalar el grub en la parcición MBR del disco de arranque directamente:
+Para sistemas BIOS debemos instalar el grub en la partición MBR del disco de arranque directamente:
 
 ~~~BASH
 grub-install --target=i386-pc /dev/sdx
@@ -429,7 +432,7 @@ Corremos os-prober para comprobar que sistema hay instalado:
 os-prober
 ~~~
 
-Ahora generamos la configuracion básica del grub:
+Ahora generamos la configuración básica del grub:
 
 ~~~BASH
 grub-mkconfig -o /boot/grub/grub.cfg
@@ -577,13 +580,13 @@ makepkg -si
 
 Cuando se instalen los drivers ahora podemos borrar los directorios de compilación.
 
-# Configuracion de un entorno de escritorio
+# Configuración de un entorno de escritorio
 
 Un entorno de escritorio es recomendado si la computadora en donde se esta instalando el sistema requiere de capacidades gráficas. Existen una variedad bastante grande de entornos de escritorios, a mi en lo personal me gustan dos: GNOME y KDE Plasma.
 
 Antes de instalar un entorno debemos tener el servidor de gráficos. Xorg esta en casi todo sistema, sin embargo, Wayland esta ganando terreno últimamente.
 
-## Instalacion de Xorg
+## Instalación de Xorg
 
 Podemos instalar el servidor de ventanas X con el comando:
 
@@ -591,7 +594,7 @@ Podemos instalar el servidor de ventanas X con el comando:
 sudo pacman -S xorg
 ~~~
 
-## Instalacion de GNOME
+## Instalación de GNOME
 
 Si GNOME es tu escritorio, lo podes instalar tan facil como el siguiente comando:
 
@@ -613,7 +616,7 @@ sudo systemctl enable cups
 sudo systemctl enable bluetooth
 ~~~
 
-## Instalacion de KDE Plasma
+## Instalación de KDE Plasma
 
 Si queres tener en tu carpeta de usuario, carpetas como *Documentos*, *Descargas*, *Música*, *etc*. Instalamos el servicios de carpetas de usuario:
 
@@ -857,6 +860,22 @@ git clone https://aur.archlinux.org/yay.git
 cd yay
 makepkg -si
 ~~~
+
+## Kitty
+
+Kitty es un emulador de terminal basado en OpenGL programable con TrueColor, compatibilidad con ligaduras, extensiones de protocolo para entrada de teclado y representación de imágenes. También ofrece capacidades de mosaico, como GNU Screen o tmux.
+
+### Instalación
+
+Para poder instalarla basta con ejecutar:
+
+~~~BASH
+sudo pacman -S kitty
+~~~
+
+### Configuración
+
+Kitty almacena su configuración en *$HOME/.config/kitty/kitty.conf* y la configuración predeterminada se puede encontrar en */usr/share/doc/kitty/kitty.conf*. Se pueden ajustar las fuentes, los colores, los cursores y los comportamientos de desplazamiento hacia atrás. Puedes ver todas las opciones disponibles en la [documentación oficial.](https://sw.kovidgoyal.net/kitty/conf/)
 
 ## ZSH
 
