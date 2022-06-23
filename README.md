@@ -697,7 +697,7 @@ Ahora podemos reiniciar la PC para entrar en el modo gráfico.
 Primero instalamos las utilidades de mesa, esto nos servirá para haberiguar que gráfica esta renderizando el escritorio:
 
 ~~~BASH
-sudo pacman -S mesa-demos mesa-utils
+sudo pacman -S mesa lib32-mesa mesa-demos mesa-utils
 ~~~
 
 Ejecutamos el comando siguiente:
@@ -717,7 +717,7 @@ Esto significa que estamos utilizando la integrada de INTEL para el video. Yo te
 Para instalar los drivers de la tarjeta gráfica dedicada puedo ejecutar los siguientes comandos:
 
 ~~~BASH
-sudo pacman -S nvidia nvidia-utils nvidia-settings lib32-nvidia-utils virtualgl
+sudo pacman -S nvidia nvidia-utils lib32-nvidia-utils nvidia-settings virtualgl
 ~~~
 
 Una vez instalado los drivers se debe reiniciar la PC antes de hacer cualquier otra cosa.
