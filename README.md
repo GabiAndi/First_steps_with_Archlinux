@@ -831,7 +831,15 @@ makepkg -si
 
 ## Extenciones para GNOME Shell
 
-Lo mas recomendable es ir a Google Chrome e instalar el Plugin de Gnome Shell Extention. Para luego instalar las siguientes extenciones:
+Lo mas recomendable es ir a Google Chrome e instalar el Plugin de Gnome Shell Extention:
+
+~~~bash
+git clone https://aur.archlinux.org/chrome-gnome-shell.git
+cd chrome-gnome-shell
+makepkg -si
+~~~
+
+Luego instalar las siguientes extenciones:
 
 - [AppIndicator and KStatusNotifierItem Support.](https://extensions.gnome.org/extension/615/appindicator-support/)
 - [Blur my Shell.](https://extensions.gnome.org/extension/3193/blur-my-shell/)
