@@ -44,6 +44,7 @@
   - [Yay como gestor de paquetes](#yay-como-gestor-de-paquetes)
   - [Google Chrome](#google-chrome)
   - [Extenciones para GNOME Shell](#extenciones-para-gnome-shell)
+  - [Tema para aplicaciones heredadas](#tema-para-aplicaciones-heredadas)
   - [PAMAC para GNOME](#pamac-para-gnome)
   - [Kitty](#kitty)
     - [Instalación](#instalación-1)
@@ -779,14 +780,23 @@ Para usuarios de **GNOME** primero hay que instalar un gestor de sesiones parche
 ~~~bash
 git clone https://aur.archlinux.org/gdm-prime.git
 cd gdm-prime
-makepkg -si
 ~~~
 
-O si utiliza plymouth:
+Si utiliza plymouth, cuando clone el repositorio debe habilitar el flag para el soporte en el archivo *PKGBUILD*:
+
+~~~text
+nano PKGBUILD
+~~~
+
+Busque la linea:
+
+~~~text
+-D plymouth=enabled
+~~~
+
+Luego ya puede instalar:
 
 ~~~bash
-git clone https://aur.archlinux.org/gdm-plymouth-prime.git
-cd gdm-plymouth-prime
 makepkg -si
 ~~~
 
@@ -892,9 +902,7 @@ makepkg -si
 El navegador por excelencia *(por ahora)*:
 
 ~~~bash
-git clone https://aur.archlinux.org/google-chrome.git
-cd google-chrome
-makepkg -si
+yay -S google-chrome
 ~~~
 
 ## Extenciones para GNOME Shell
@@ -902,9 +910,7 @@ makepkg -si
 Lo mas recomendable es ir a Google Chrome e instalar el Plugin de Gnome Shell Extention:
 
 ~~~bash
-git clone https://aur.archlinux.org/chrome-gnome-shell.git
-cd chrome-gnome-shell
-makepkg -si
+yay -S chrome-gnome-shell
 ~~~
 
 Luego instalar las siguientes extenciones:
@@ -912,6 +918,16 @@ Luego instalar las siguientes extenciones:
 - [AppIndicator and KStatusNotifierItem Support.](https://extensions.gnome.org/extension/615/appindicator-support/)
 - [Blur my Shell.](https://extensions.gnome.org/extension/3193/blur-my-shell/)
 - [Gnome 40 UI Improvements.](https://extensions.gnome.org/extension/4158/gnome-40-ui-improvements/)
+
+## Tema para aplicaciones heredadas
+
+Aplicaciones gtk3 no tendran el tema por defecto que tienen las aplicaciones gtk4. Con lo cual debe instalar una extención de gnome:
+
+- [Legacy (GTK3) Theme Scheme Auto Switcher.](https://extensions.gnome.org/extension/4998/legacy-gtk3-theme-scheme-auto-switcher/)
+
+Luego deberá seguir el instructivo de la [página](https://fostips.com/gtk3-light-dark-fedora-gnome/). En donde se explica que se debe crear la carpeta *$HOME/.themes* y en su interior extraer el contenido del tema que se encuentra en el repositorio [adw-gtk3](https://github.com/lassekongo83/adw-gtk3/releases).
+
+Luego por último en retoques, en la pestaña apariencia, puede seleccionar el tema para las aplicaciones heredadas.
 
 ## PAMAC para GNOME
 
@@ -1061,7 +1077,7 @@ sudo pacman -S psensor
 La mejor opción para virtualizar en Linux. Lo primero que hacemos es instalar los paquetes necesarios:
 
 ~~~bash
-sudo pacman -S qemu qemu-arch-extra dmidecode ebtables dnsmasq libvirt bridge-utils openbsd-netcat radvd virt-manager virt-viewer ifplugd ifenslave tcl edk2-ovmf
+sudo pacman -S qemu-full samba dmidecode ebtables dnsmasq libvirt bridge-utils openbsd-netcat radvd virt-manager virt-viewer ifplugd ifenslave tcl edk2-ovmf
 ~~~
 
 Nos preguntará si queremos reemplazar iptables por iptables-nft, le diremos que si para poder instalar ebtables, el cual es necesario para poder tener conectividad de red en las máquinas virtuales.
