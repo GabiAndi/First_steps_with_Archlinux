@@ -58,7 +58,8 @@
     - [Sugerir comandos](#sugerir-comandos)
   - [VS Code](#vs-code)
   - [Psensors](#psensors)
-  - [Qemu/KVM](#qemukvm)
+  - [Qemu/KVM + VirtManager](#qemukvm--virtmanager)
+    - [Habilite la cuenta de usuario normal para usar KVM](#habilite-la-cuenta-de-usuario-normal-para-usar-kvm)
 - [Configuración para servidor](#configuración-para-servidor)
   - [Programas útiles](#programas-útiles)
     - [Htop](#htop)
@@ -1072,21 +1073,41 @@ Por último instalamos la utilidad de Psensors.
 sudo pacman -S psensor
 ~~~
 
-## Qemu/KVM
+## Qemu/KVM + VirtManager
 
 La mejor opción para virtualizar en Linux. Lo primero que hacemos es instalar los paquetes necesarios:
 
 ~~~bash
-sudo pacman -S qemu-full samba dmidecode ebtables dnsmasq libvirt bridge-utils openbsd-netcat radvd virt-manager virt-viewer ifplugd ifenslave tcl edk2-ovmf
+sudo pacman -S archlinux-keyring qemu-desktop samba vde2 dmidecode ebtables dnsmasq libvirt bridge-utils openbsd-netcat radvd virt-manager virt-viewer ifplugd tcl edk2-ovmf libguestfs
 ~~~
 
 Nos preguntará si queremos reemplazar iptables por iptables-nft, le diremos que si para poder instalar ebtables, el cual es necesario para poder tener conectividad de red en las máquinas virtuales.
 
-Agregamos nuestro usuario a los grupos kvm y polkitd:
+### Habilite la cuenta de usuario normal para usar KVM
+
+Dado que queremos usar nuestra cuenta de usuario estándar de Linux para administrar KVM, configuremos KVM para permitir esto:
+
+~~~bash
+sudo nano /etc/libvirt/libvirtd.conf
+~~~
+
+Establezca la propiedad del grupo de sockets de dominio UNIX en libvirt:
+
+~~~text
+#unix_sock_group = "libvirt"
+~~~
+
+Establezca los permisos de socket UNIX para el socket R/W:
+
+~~~text
+#unix_sock_rw_perms = "0770"
+~~~
+
+Agregamos nuestro usuario a los grupos kvm y libvirt:
 
 ~~~bash
 sudo usermod -aG kvm $USER
-sudo usermod -aG polkitd $USER
+sudo usermod -aG libvirt $USER
 ~~~
 
 Cargamos los módulos necesarios. En caso de tener un procesador intel sería así:
@@ -1110,24 +1131,7 @@ sudo systemctl enable libvirtd
 sudo systemctl start libvirtd
 ~~~
 
-Le damos permiso a nuestro usuario para poder gestionar máquinas virtuales mediante el siguiente archivo:
-
-~~~bash
-sudo nano /etc/polkit-1/rules.d/50-org.libvirt.unix.manage.rules
-~~~
-
-Agregamos lo siguiente:
-
-~~~text
-polkit.addRule(function(action, subject) {
-if (action.id == "org.libvirt.unix.manage" &&
-  subject.user == "NOMBRE_USUARIO") {
-  return polkit.Result.YES;
-}
-});
-~~~
-
-Reemplazamos NOMBRE_USUARIO por nuestro nombre de usuario. Reiniciamos y abrimos el gestor de máquinas virtuales.
+Ahora reinicie y puede utilizar el gestor.
 
 # Configuración para servidor
 
